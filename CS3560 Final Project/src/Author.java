@@ -1,8 +1,38 @@
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+@Entity
+@Table(name = "authors", schema = "library")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Author extends Person
 {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private int id;
+	@Column(name = "nationality")
 	private String nationality;
+	@Column(name = "subject")
 	private String subject;
+	
+	public Author() {
+		super(null);
+	}
 	
 	// constructor
 	public Author(String name, String nationality, String subject)
@@ -52,6 +82,45 @@ public class Author extends Person
 				"\n\tSubject: " + subject + "\n";
 	}
 	
-	// TODO implement findBy() here
+	public static List<Author> findBy(String name, String nationality, String subject) {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Author> query = cb.createQuery(Author.class);
+		Root<Author> root = query.from(Author.class);
+		query = query.select(root);
+		
+		Predicate where = null;
+		
+		if (name != null) {
+			where = cb.like(root.get("name"), "%" + name + "%");
+		}
+		
+		if (nationality != null) {
+			if (where == null)
+				where = cb.like(root.get("nationality"), "%" + nationality + "%");
+			else
+				where = cb.and(where, cb.like(root.get("nationality"), "%" + nationality + "%"));
+		}
+		
+		if (subject != null) {
+			if (where == null)
+				where = cb.like(root.get("subject"), "%" + subject + "%");
+			else
+				where = cb.and(where, cb.like(root.get("subject"), "%" + subject + "%"));
+		}
+		
+		if (where != null)
+			query = query.where(where);
+		
+		List<Author> authors = session.createQuery(query).getResultList();
+		
+		session.getTransaction().commit();
+		
+		return authors;
+	}
 	
 }

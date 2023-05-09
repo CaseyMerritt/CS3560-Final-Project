@@ -1,5 +1,13 @@
-public class Person // implements CRUDOperations
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+@MappedSuperclass
+public abstract class Person implements CRUDOperations
 {
+	@Column(name = "name")
 	private String name;
 	
 	// constructor
@@ -19,6 +27,34 @@ public class Person // implements CRUDOperations
 	{
 		return name;
 	}
-	
-	// TODO implement CRUD Operations	
+
+	@Override
+	public void create() {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		session.save(this);
+		session.getTransaction().commit();
+	}
+
+	@Override
+	public void update() {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		session.update(this);
+		session.getTransaction().commit();
+	}
+
+	@Override
+	public void delete() {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		session.delete(this);
+		session.getTransaction().commit();
+	}
 }
