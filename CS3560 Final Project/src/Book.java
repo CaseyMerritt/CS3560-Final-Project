@@ -7,12 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -31,19 +31,23 @@ public class Book extends Item
 	private String publisher;
 	@Column(name = "publication_date")
 	private Date publicationDate;
-	// TODO finish annotations
 	@ManyToMany
-	@JoinTable(name = "books_authors")
+	@JoinTable(name = "books_authors",
+			joinColumns = @JoinColumn(name = "book_code"),
+			inverseJoinColumns = @JoinColumn(name = "student_id")
+	)
 	private List<Author> authors;
 	
 	public Book() {
 		super(null, null, null, 0);
+		authors = new ArrayList<>();
 	}
 	
 	// constructor
 	public Book(String title, String description, String location, double dailyPrice)
 	{
 		super(title, description, location, dailyPrice);
+		authors = new ArrayList<>();
 	}
 
 	// setters
@@ -153,9 +157,12 @@ public class Book extends Item
 			predicates.add(cb.greaterThanOrEqualTo(joined.get("pages"), bookQuery.getMinPages()));
 		}
 		
-		// TODO implement logic for published after and published before
 		if (bookQuery.getPublishedAfter() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(joined.get("publication_date"), bookQuery.getPublishedAfter()));
+			predicates.add(cb.greaterThanOrEqualTo(joined.get("publication_date"), bookQuery.getPublishedAfter().toString()));
+		}
+		
+		if (bookQuery.getPublishedBefore() != null) {
+			predicates.add(cb.lessThanOrEqualTo(joined.get("publication_date"), bookQuery.getPublishedBefore().toString()));
 		}
 		
 		if (bookQuery.getPublisher() != null) {
