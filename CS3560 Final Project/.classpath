@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="/Users/jjkim/Documents/School/CS 3560 - Obj-Oriented Design and Prog/Project/CS3560-Final-Project/CS3560 Final Project/lib/classmate-1.5.1.jar"/>
 	<classpathentry kind="lib" path="/Users/jjkim/Documents/School/CS 3560 - Obj-Oriented Design and Prog/Project/CS3560-Final-Project/CS3560 Final Project/lib/FastInfoset-1.2.15.jar"/>
 	<classpathentry kind="lib" path="/Users/jjkim/Documents/School/CS 3560 - Obj-Oriented Design and Prog/Project/CS3560-Final-Project/CS3560 Final Project/lib/hibernate-commons-annotations-5.1.2.Final.jar"/>
-	<classpathentry kind="lib" path="/Users/jjkim/Documents/School/CS 3560 - Obj-Oriented Design and Prog/Project/CS3560-Final-Project/CS3560 Final Project/lib/hibernate-core-5.6.0.Final.jar"/>
+	<classpathentry kind="lib" path="/Users/jjkim/Documents/School/CS 3560 - Obj-Oriented Design and Prog/Project/CS3560-Final-Project/CS3560 Final Project/lib/hibernate-core-5.6.0.Final.jar" sourcepath="lib/hibernate-core-5.6.0.Final.jar"/>
 	<classpathentry kind="lib" path="/Users/jjkim/Documents/School/CS 3560 - Obj-Oriented Design and Prog/Project/CS3560-Final-Project/CS3560 Final Project/lib/istack-commons-runtime-3.0.7.jar"/>
 	<classpathentry kind="lib" path="/Users/jjkim/Documents/School/CS 3560 - Obj-Oriented Design and Prog/Project/CS3560-Final-Project/CS3560 Final Project/lib/jandex-2.2.3.Final.jar"/>
 	<classpathentry kind="lib" path="/Users/jjkim/Documents/School/CS 3560 - Obj-Oriented Design and Prog/Project/CS3560-Final-Project/CS3560 Final Project/lib/javax.activation-api-1.2.0.jar"/>
