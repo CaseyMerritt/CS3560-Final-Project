@@ -13,6 +13,8 @@ public class HibernateSessionFactory {
 				                 .addAnnotatedClass(Author.class)
 				                 .addAnnotatedClass(Director.class)
 				                 .addAnnotatedClass(Student.class)
+				                 .addAnnotatedClass(Item.class)
+				                 .addAnnotatedClass(Book.class)
 				                 .buildSessionFactory();
 		}
 		
