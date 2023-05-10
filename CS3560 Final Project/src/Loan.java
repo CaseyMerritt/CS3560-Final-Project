@@ -1,6 +1,7 @@
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+
 public class Loan
 {
 	private int number; // is this the id for the loan?

@@ -1,3 +1,4 @@
+import java.util.Date;
 
 public class LoanQuery {
 	private Integer number;
