@@ -1,328 +1,658 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.table.DefaultTableModel;
 
 public class ApplicationWindow extends JFrame{
     public ApplicationWindow(){
-        //Set title of the JFrame
-        this.setTitle("Library");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setPreferredSize(new Dimension(1200, 650));
+        setTitle("Library Management");
+        setVisible(true);
 
-        // Create a panel
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        // Create the tabbed pane.
+        JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Create title
-        JLabel titleLabel = new JLabel("Library", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Serif", Font.BOLD, 35));
-        panel.add(titleLabel, BorderLayout.NORTH);
+        // Add tabs.
+        tabbedPane.addTab("Loans", new LoansTabPanel());
+        tabbedPane.addTab("Items", new ItemTabPanel());
+        tabbedPane.addTab("Students", new StudentsTabPanel());
+        tabbedPane.addTab("Authors", new AuthorsTabPanel());
+        tabbedPane.addTab("Directors", new DirectorsTabPanel());
 
-        // Create button panel
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(5, 1));
-
-        // Create buttons
-        JButton loanButton = new JButton("Loans");
-        JButton itemsButton = new JButton("Items");
-        JButton studentsButton = new JButton("Students");
-        JButton authorsButton = new JButton("Authors");
-        JButton directorsButton = new JButton("Directors");
-
-        // Add action listeners to buttons
-        loanButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // open Loans panel
-                openLoans();
-            }
-        });
-
-        itemsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // open Items panel
-                openItems();
-            }
-        });
-
-        studentsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // open Students panel
-                openStudents();
-            }
-        });
-
-        authorsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // open Authors panel
-                openAuthors();
-            }
-        });
-
-        directorsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // open Directors panel
-                openDirectors();
-            }
-        });
-
-        // Add buttons to panel
-        buttonPanel.add(loanButton);
-        buttonPanel.add(itemsButton);
-        buttonPanel.add(studentsButton);
-        buttonPanel.add(authorsButton);
-        buttonPanel.add(directorsButton);
-
-        // Add button panel to main panel
-        panel.add(buttonPanel, BorderLayout.CENTER);
-
-
-        // Add panel to JFrame
-        this.add(panel);
-        this.setSize(500, 500);
-        this.setResizable(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setVisible(true);
+        add(tabbedPane);
+        pack();
     }
+}
 
-    // Method to open Loans Dialog
-    private void openLoans() {
-        JPanel loansPanel = new JPanel();
-        loansPanel.setLayout(new GridLayout(2, 1));
+class ItemTabPanel extends JPanel {
 
-        JButton searchButton = new JButton("Search Loans");
-        JButton reportButton = new JButton("Generate Report");
+    private JTextField codeField;
+    private JTextField titleField;
+    private JTextField locationField;
+    private JTextField maxDailyPrice;
+    private JTextField minDailyPrice;
+    private JTextField maxPageLength;
+    private JTextField minPageLength;
+    private JTextField publisher;
+    private JTextField authorOrDirector;
+    private JTextField publishedAfter;
+    private JTextField publishedBefore;
+    private JCheckBox showAvailiable;
 
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Get loan id from user
-                String searchLoanTerm = JOptionPane.showInputDialog("Enter Loan Id");
+    private JTable table;
+    
+    public ItemTabPanel() {
+        setLayout(new BorderLayout());
 
-                try{
-                    int loanId = Integer.parseInt(searchLoanTerm);
-                    // Search loans in database
-                    // database.searchLoans(loanId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid loan ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+        // Create input fields.
+        codeField = new JTextField(20);
+        titleField = new JTextField(20);
+        locationField = new JTextField(20);
+        maxDailyPrice = new JTextField(20);
+        minDailyPrice = new JTextField(20);
+        showAvailiable = new JCheckBox("Only Show Avaliable");
+        maxPageLength = new JTextField(20);
+        minPageLength  = new JTextField(20);
+        publisher  = new JTextField(20);
+        authorOrDirector  = new JTextField(20);
+        publishedAfter  = new JTextField(20);
+        publishedBefore  = new JTextField(20);
+        
+        // Create a panel to hold the fields.
+        JPanel fieldsPanel = new JPanel();
+        fieldsPanel.setLayout(new GridLayout(3, 5, 20, 0));
+        
+        //Create Panels
+        JPanel empty1 = new JPanel(new BorderLayout());
+        JPanel empty2 = new JPanel(new BorderLayout());
+
+        JPanel code = new JPanel(new BorderLayout());
+        code.add(new JLabel("Code"), BorderLayout.NORTH);
+        code.add(codeField, BorderLayout.CENTER);
+
+        JPanel title = new JPanel(new BorderLayout());
+        title.add(new JLabel("Title"), BorderLayout.NORTH);
+        title.add(titleField, BorderLayout.CENTER);
+
+        JPanel location = new JPanel(new BorderLayout());
+        location.add(new JLabel("Location"), BorderLayout.NORTH);
+        location.add(locationField, BorderLayout.CENTER);
+
+        JPanel mxDaily = new JPanel(new BorderLayout());
+        mxDaily.add(new JLabel("Max Daily Price"), BorderLayout.NORTH);
+        mxDaily.add(maxDailyPrice, BorderLayout.CENTER);
+
+        JPanel mnDaily = new JPanel(new BorderLayout());
+        mnDaily.add(new JLabel("Min Daily Price"), BorderLayout.NORTH);
+        mnDaily.add(minDailyPrice, BorderLayout.CENTER);
+
+        JPanel mxPL = new JPanel(new BorderLayout());
+        mxPL.add(new JLabel("Max Pages Length"), BorderLayout.NORTH);
+        mxPL.add(maxPageLength, BorderLayout.CENTER);
+
+        JPanel mnPL = new JPanel(new BorderLayout());
+        mnPL.add(new JLabel("Min Pages Length"), BorderLayout.NORTH);
+        mnPL.add(minPageLength, BorderLayout.CENTER);
+
+        JPanel pblshr = new JPanel(new BorderLayout());
+        pblshr.add(new JLabel("Publisher"), BorderLayout.NORTH);
+        pblshr.add(publisher, BorderLayout.CENTER);
+
+        JPanel aOd = new JPanel(new BorderLayout());
+        aOd.add(new JLabel("Author/Director"), BorderLayout.NORTH);
+        aOd.add(authorOrDirector, BorderLayout.CENTER);
+
+        JPanel pblshAfter = new JPanel(new BorderLayout());
+        pblshAfter.add(new JLabel("Published Release After"), BorderLayout.NORTH);
+        pblshAfter.add(publishedAfter, BorderLayout.CENTER);
+
+        JPanel pblshBefore = new JPanel(new BorderLayout());
+        pblshBefore.add(new JLabel("Published Release Before"), BorderLayout.NORTH);
+        pblshBefore.add(publishedBefore, BorderLayout.CENTER);
+
+            // Create radio buttons for the "Book" and "Film" options.
+        JRadioButton bookButton = new JRadioButton("Book");
+        JRadioButton filmButton = new JRadioButton("Film");
+
+        // Group the radio buttons to make them mutually exclusive.
+        ButtonGroup group = new ButtonGroup();
+        group.add(bookButton);
+        group.add(filmButton);
+
+        // Create a panel for the radio buttons.
+        JPanel radioPanel = new JPanel();
+        radioPanel.add(bookButton);
+        radioPanel.add(filmButton);
+
+        fieldsPanel.add(code);
+        fieldsPanel.add(mxDaily);
+        fieldsPanel.add(radioPanel);
+        fieldsPanel.add(empty1);
+        fieldsPanel.add(empty2);
+        fieldsPanel.add(title);
+        fieldsPanel.add(mnDaily);
+        fieldsPanel.add(mxPL);//max pages length
+        fieldsPanel.add(pblshAfter);//published released after
+        fieldsPanel.add(pblshr);//publisher
+        fieldsPanel.add(location);
+        fieldsPanel.add(showAvailiable);
+        fieldsPanel.add(mnPL);//min pages length
+        fieldsPanel.add(pblshBefore);//published released before
+        fieldsPanel.add(aOd);//Author/Director
+
+        // Add search button.
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(e -> {
+            // Handle search.
         });
 
-        reportButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Generate financial report
-                // financialReport.generate();
-            }
+        // Add reset button button.
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(e -> {
+            // Handle Reset.
+
+            codeField.setText("");
+            titleField.setText("");;
+            locationField.setText("");;
+            maxDailyPrice.setText("");;
+            minDailyPrice.setText("");;
+            maxPageLength.setText("");;
+            minPageLength.setText("");
+            publisher.setText("");
+            authorOrDirector.setText("");
+            publishedAfter.setText("");
+            publishedBefore.setText("");
+            showAvailiable.setSelected(false);
+            group.clearSelection();
         });
 
-        loansPanel.add(searchButton);
-        loansPanel.add(reportButton);
-
-        JOptionPane.showMessageDialog(null, loansPanel, "Loans", JOptionPane.PLAIN_MESSAGE);
-    }
-
-    private void openItems() {
-        JPanel itemsPanel = new JPanel();
-        itemsPanel.setLayout(new GridLayout(2, 1));
-
-        JButton searchButton = new JButton("Search Items");
-        JButton deleteButton = new JButton("Delete Item");
-
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Get loan id from user
-                String searchItemTerm = JOptionPane.showInputDialog("Enter Item Id");
-
-                try{
-                    int itemId = Integer.parseInt(searchItemTerm);
-                    // Search item in database
-                    // database.searchItem(itemId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid item ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+        // Add add button.
+        JButton addButton = new JButton("Add New");
+        addButton.addActionListener(e -> {
+            // Handle Add.
         });
 
+        // Add delete button.
+        JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener(new ActionListener() {
+            // Handle delete.
             public void actionPerformed(ActionEvent e) {
-                // Get loan id from user
-                String searchItemTerm = JOptionPane.showInputDialog("Enter Item Id To Delete");
+                // Get Item id from user
+                String searchLoanTerm = JOptionPane.showInputDialog("Enter Code To Delete");
 
                 try{
-                    int itemId = Integer.parseInt(searchItemTerm);
-                    // Delete item in database
+                    int itemId = Integer.parseInt(searchLoanTerm);
+                    // delete item in database
                     // database.deleteItem(itemId);
                 }catch (NumberFormatException ex){
                     // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid item ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Item Code.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        });
+        });        
 
-        itemsPanel.add(searchButton);
-        itemsPanel.add(deleteButton);
+        // Add buttons to the panel.
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(searchButton);
+        buttonPanel.add(resetButton);
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
 
-        JOptionPane.showMessageDialog(null, itemsPanel, "Items", JOptionPane.PLAIN_MESSAGE);
-    }
+        // Create table with 10 columns.
+        String[] columnNames = {
+            "Code", "Title", "Description", "Location", "Daily Price",
+            "Pages/Length", "Release/Publish Date", "Publisher", "Availability", ""
+        };
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        table = new JTable(model);
 
-    private void openStudents() {
-        JPanel studentsPanel = new JPanel();
-        studentsPanel.setLayout(new GridLayout(3, 1));
+        // Create a JScrollPane and add the table to it.
+        JScrollPane scrollPane = new JScrollPane(table);
 
-        JButton searchButton = new JButton("Search Students");
-        JButton deleteButton = new JButton("Delete Student");
-        JButton changeButton = new JButton("Change Student");
-
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Get Student id from user
-                String searchStudentTerm = JOptionPane.showInputDialog("Enter Student Id");
-
-                try{
-                    int studentId = Integer.parseInt(searchStudentTerm);
-                    // Search Student in database
-                    // database.searchStudent(studentId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Student ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-        
-        deleteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Get Student id from user
-                String searchStudentTerm = JOptionPane.showInputDialog("Enter Student Id");
-
-                try{
-                    int studentId = Integer.parseInt(searchStudentTerm);
-                    // delete Student in database
-                    // database.deleteStudent(studentId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Student ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        changeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Change Student in database
-                // database.changeStudent();
-            }
-        });
-
-        studentsPanel.add(searchButton);
-        studentsPanel.add(deleteButton);
-        studentsPanel.add(changeButton);
-
-        JOptionPane.showMessageDialog(null, studentsPanel, "Students", JOptionPane.PLAIN_MESSAGE);
-    }
-
-    private void openAuthors() {
-        JPanel authorsPanel = new JPanel();
-        authorsPanel.setLayout(new GridLayout(3, 1));
-
-        JButton searchButton = new JButton("Search Authors");
-        JButton deleteButton = new JButton("Delete Author");
-        JButton changeButton = new JButton("Change Author");
-
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Get Author id from user
-                String searchAuthorTerm = JOptionPane.showInputDialog("Enter Author Id");
-
-                try{
-                    int authorId = Integer.parseInt(searchAuthorTerm);
-                    // search Author in database
-                    // database.searchAuthor(authorId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Author ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-        
-        deleteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Get Author id from user
-                String searchAuthorTerm = JOptionPane.showInputDialog("Enter Author Id");
-
-                try{
-                    int authorId = Integer.parseInt(searchAuthorTerm);
-                    // delete Author in database
-                    // database.deleteAuthor(authorId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Author ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        changeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Change author in database
-                // database.changeAuthor();
-            }
-        });
-
-        authorsPanel.add(searchButton);
-        authorsPanel.add(deleteButton);
-        authorsPanel.add(changeButton);
-
-        JOptionPane.showMessageDialog(null, authorsPanel, "Authors", JOptionPane.PLAIN_MESSAGE);
-    }
-
-    private void openDirectors() {
-        JPanel directorsPanel = new JPanel();
-        directorsPanel.setLayout(new GridLayout(3, 1));
-
-        JButton searchButton = new JButton("Search Directors");
-        JButton deleteButton = new JButton("Delete Director");
-        JButton changeButton = new JButton("Change Director");
-
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Get Director id from user
-                String searchDirectorTerm = JOptionPane.showInputDialog("Enter Director Id");
-
-                try{
-                    int directorId = Integer.parseInt(searchDirectorTerm);
-                    // search Director in database
-                    // database.searchAuthor(directorId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Director ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-        
-        deleteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Get Director id from user
-                String searchDirectorTerm = JOptionPane.showInputDialog("Enter Director Id");
-
-                try{
-                    int directorId = Integer.parseInt(searchDirectorTerm);
-                    // delete Director in database
-                    // database.deleteAuthor(directorId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Director ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        changeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Change directors in database
-                // database.changeDirectors();
-            }
-        });
-
-        directorsPanel.add(searchButton);
-        directorsPanel.add(deleteButton);
-        directorsPanel.add(changeButton);
-
-        JOptionPane.showMessageDialog(null, directorsPanel, "Directors", JOptionPane.PLAIN_MESSAGE);
+        // Add the fields and buttons to the main panel.
+        add(fieldsPanel, BorderLayout.NORTH);
+        add(buttonPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
     }
 }
+
+class LoansTabPanel extends JPanel {
+    private JTextField numberField;
+    private JTextField titleField;
+    private JTextField broncoIdField;
+    private JTextField nameField;
+    private JTextField loanedAfterField;
+    private JTextField loanedBeforeField;
+    private JTextField dueAfterField;
+    private JTextField dueBeforeField;
+    private JTextField CourseField;
+    private JCheckBox showOverDue;
+
+    private JTable table;
+
+    public LoansTabPanel() {
+        setLayout(new BorderLayout());
+
+        // Create input fields.
+        numberField = new JTextField(20);
+        titleField = new JTextField(20);
+        broncoIdField = new JTextField(20);
+        nameField = new JTextField(20);
+        loanedAfterField = new JTextField(20);
+        loanedBeforeField = new JTextField(20);
+        dueAfterField  = new JTextField(20);
+        dueBeforeField  = new JTextField(20);
+        CourseField  = new JTextField(20);
+        showOverDue = new JCheckBox("Only Show Overdue");
+
+        // Create a panel to hold the fields.
+        JPanel fieldsPanel = new JPanel();
+        fieldsPanel.setLayout(new GridLayout(2, 5, 20, 0));
+
+        JPanel numberPanel = new JPanel(new BorderLayout());
+        numberPanel.add(new JLabel("Number"), BorderLayout.NORTH);
+        numberPanel.add(numberField, BorderLayout.CENTER);
+
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.add(new JLabel("Item Title"), BorderLayout.NORTH);
+        titlePanel.add(titleField, BorderLayout.CENTER);
+
+        JPanel broncoIdPanel = new JPanel(new BorderLayout());
+        broncoIdPanel.add(new JLabel("Student Bronco ID"), BorderLayout.NORTH);
+        broncoIdPanel.add(broncoIdField, BorderLayout.CENTER);
+
+        JPanel namePanel = new JPanel(new BorderLayout());
+        namePanel.add(new JLabel("Student Name"), BorderLayout.NORTH);
+        namePanel.add(nameField, BorderLayout.CENTER);
+
+        JPanel dueAfterPanel = new JPanel(new BorderLayout());
+        dueAfterPanel.add(new JLabel("Due After"), BorderLayout.NORTH);
+        dueAfterPanel.add(dueAfterField, BorderLayout.CENTER);
+
+        JPanel dueBeforePanel = new JPanel(new BorderLayout());
+        dueBeforePanel.add(new JLabel("Due Before"), BorderLayout.NORTH);
+        dueBeforePanel.add(dueBeforeField, BorderLayout.CENTER);
+
+        JPanel loanedAfterPanel = new JPanel(new BorderLayout());
+        loanedAfterPanel.add(new JLabel("Loaned After"), BorderLayout.NORTH);
+        loanedAfterPanel.add(loanedAfterField, BorderLayout.CENTER);
+
+        JPanel loanedBeforePanel = new JPanel(new BorderLayout());
+        loanedBeforePanel.add(new JLabel("Loaned Before"), BorderLayout.NORTH);
+        loanedBeforePanel.add(loanedBeforeField, BorderLayout.CENTER);
+
+        JPanel coursePanel = new JPanel(new BorderLayout());
+        coursePanel.add(new JLabel("Course"), BorderLayout.NORTH);
+        coursePanel.add(CourseField, BorderLayout.CENTER);
+
+        fieldsPanel.add(numberPanel);
+        fieldsPanel.add(broncoIdPanel);
+        fieldsPanel.add(loanedAfterPanel);
+        fieldsPanel.add(dueAfterPanel);
+        fieldsPanel.add(coursePanel);
+        fieldsPanel.add(titlePanel);
+        fieldsPanel.add(namePanel);
+        fieldsPanel.add(loanedBeforePanel);
+        fieldsPanel.add(dueBeforePanel);
+        fieldsPanel.add(showOverDue);
+
+        // Add search button.
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(e -> {
+            // Handle search.
+        });
+
+        // Add reset button button.
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(e -> {
+            // Handle Reset.
+
+            numberField.setText("");
+            titleField.setText("");
+            broncoIdField.setText("");
+            nameField.setText("");
+            loanedAfterField.setText("");
+            loanedBeforeField.setText("");
+            dueAfterField.setText("");
+            dueBeforeField.setText("");
+            CourseField.setText("");
+            showOverDue.setText("");
+            showOverDue.setSelected(false);
+        });
+
+        // Add add button.
+        JButton addButton = new JButton("Add New");
+        addButton.addActionListener(e -> {
+            // Handle Add.
+        });
+
+        // Add delete button.
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new ActionListener() {
+            //Handle delete.
+            public void actionPerformed(ActionEvent e) {
+                // Get loan id from user
+                String deleteLoanTerm = JOptionPane.showInputDialog("Enter Number To Delete");
+
+                try{
+                    int loanId = Integer.parseInt(deleteLoanTerm);
+                    // delete loan in database
+                    // database.deleteItem(loanId);
+                }catch (NumberFormatException ex){
+                    // Show error message
+                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid loan Number.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        
+        // Add Revenue button.
+        JButton revenueButton = new JButton("Revenue Report");
+        addButton.addActionListener(e -> {
+            // Handle Revenue Report.
+        });        
+
+        // Add buttons to the panel.
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(searchButton);
+        buttonPanel.add(resetButton);
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(revenueButton);
+
+        // Create table with 8 columns.
+        String[] columnNames = {
+            "Number", "Item Title", "Student Bronco ID", "Student Name", "Course", "Loan Date", "Due Date", ""
+        };
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        table = new JTable(model);
+
+        // Create a JScrollPane and add the table to it.
+        JScrollPane scrollPane = new JScrollPane(table);          
+
+        // Add the fields and buttons to the main panel.
+        add(fieldsPanel, BorderLayout.NORTH);
+        add(buttonPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
+    }
+}
+
+class StudentsTabPanel extends JPanel {
+    private JTextField broncoIdField;
+    private JTextField nameField;
+
+    private JTable table;
+
+    public StudentsTabPanel() {
+        setLayout(new BorderLayout());
+
+        // Create input fields.
+        nameField = new JTextField(20);
+        broncoIdField = new JTextField(20);
+
+        // Create a panel to hold the fields.
+        JPanel fieldsPanel = new JPanel();
+        fieldsPanel.setLayout(new GridLayout(1, 3, 20, 0));
+
+        JPanel broncoIdPanel = new JPanel(new BorderLayout());
+        broncoIdPanel.add(new JLabel("Bronco ID"), BorderLayout.NORTH);
+        broncoIdPanel.add(broncoIdField, BorderLayout.CENTER);
+
+        JPanel namePanel = new JPanel(new BorderLayout());
+        namePanel.add(new JLabel("Name"), BorderLayout.NORTH);
+        namePanel.add(nameField, BorderLayout.CENTER);
+
+        
+        fieldsPanel.add(broncoIdPanel);
+        fieldsPanel.add(namePanel);
+
+        // Add search button.
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(e -> {
+            // Handle search.
+        });
+
+        // Add reset button button.
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(e -> {
+            // Handle Reset.
+            nameField.setText("");
+            broncoIdField.setText("");
+        });
+
+        // Add Add button.
+        JButton addButton = new JButton("Add New");
+        addButton.addActionListener(e -> {
+            // Handle Add.
+        });
+
+        // Add delete button.
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new ActionListener() {
+            // Handle delete.
+            public void actionPerformed(ActionEvent e) {
+                // Get bronco id from user
+                String deleteStudentTerm = JOptionPane.showInputDialog("Enter Bronco ID To Delete");
+
+                try{
+                    int broncoId = Integer.parseInt(deleteStudentTerm);
+                    // delete Student in database
+                    // database.deleteStudent(broncoId);
+                }catch (NumberFormatException ex){
+                    // Show error message
+                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid loan Number.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });           
+
+        // Add buttons to the panel.
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(searchButton);
+        buttonPanel.add(resetButton);
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
+
+        // Create table with 7 columns.
+        String[] columnNames = {
+            "Bronco ID", "Name", "Items Loaned", "Items Overdue", "Balance", ""
+        };
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        table = new JTable(model);
+
+        // Create a JScrollPane and add the table to it.
+        JScrollPane scrollPane = new JScrollPane(table);       
+
+        // Add the fields and buttons to the main panel.
+        add(fieldsPanel, BorderLayout.NORTH);
+        add(buttonPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
+    }
+}
+
+class AuthorsTabPanel extends JPanel {
+    private JTextField nameField;
+    private JTextField nationalityField;
+    private JTextField styleField;
+
+    private JTable table;
+
+    public AuthorsTabPanel() {
+        setLayout(new BorderLayout());
+
+        // Create input fields.
+        nameField = new JTextField(20);
+        nationalityField = new JTextField(20);
+        styleField = new JTextField(20);
+
+        // Create a panel to hold the fields.
+        JPanel fieldsPanel = new JPanel();
+        fieldsPanel.setLayout(new GridLayout(1, 3, 20, 0));
+
+        JPanel namePanel = new JPanel(new BorderLayout());
+        namePanel.add(new JLabel("Code"), BorderLayout.NORTH);
+        namePanel.add(nameField, BorderLayout.CENTER);
+
+        JPanel nationalityPanel = new JPanel(new BorderLayout());
+        nationalityPanel.add(new JLabel("Title"), BorderLayout.NORTH);
+        nationalityPanel.add(nationalityField, BorderLayout.CENTER);
+
+        JPanel stylePanel = new JPanel(new BorderLayout());
+        stylePanel.add(new JLabel("Location"), BorderLayout.NORTH);
+        stylePanel.add(styleField, BorderLayout.CENTER);
+
+        
+        fieldsPanel.add(namePanel);//min pages length
+        fieldsPanel.add(nationalityPanel);//published released before
+        fieldsPanel.add(stylePanel);//Author/Director
+
+        // Add search button.
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(e -> {
+            // Handle search.
+        });
+
+        // Add reset button button.
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(e -> {
+            // Handle Reset.
+            nameField.setText("");
+            nationalityField.setText("");
+            styleField.setText("");
+        });
+
+        // Add Add button.
+        JButton addButton = new JButton("Add New");
+        addButton.addActionListener(e -> {
+            // Handle Add.
+        });
+
+        // Add delete button.
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new ActionListener() {
+            // Handle delete.
+            public void actionPerformed(ActionEvent e) {
+                // Get author from user
+                String name = JOptionPane.showInputDialog("Enter Author Name To Delete");
+                // delete Author in database
+                // database.deleteAuthor(name);
+            }
+        });           
+
+        // Add buttons to the panel.
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(searchButton);
+        buttonPanel.add(resetButton);
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
+
+        // Create table with 5 columns.
+        String[] columnNames = {
+            "Name", "Nationality", "Subject", "Books", ""
+        };
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        table = new JTable(model);
+
+        // Create a JScrollPane and add the table to it.
+        JScrollPane scrollPane = new JScrollPane(table);            
+
+        // Add the fields and buttons to the main panel.
+        add(fieldsPanel, BorderLayout.NORTH);
+        add(buttonPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
+    }
+}
+
+class DirectorsTabPanel extends JPanel {
+    private JTextField nameField;
+    private JTextField nationalityField;
+    private JTextField styleField;
+
+    private JTable table;
+
+    public DirectorsTabPanel() {
+        setLayout(new BorderLayout());
+
+        // Create input fields.
+        nameField = new JTextField(20);
+        nationalityField = new JTextField(20);
+        styleField = new JTextField(20);
+
+        // Create a panel to hold the fields.
+        JPanel fieldsPanel = new JPanel();
+        fieldsPanel.setLayout(new GridLayout(1, 3, 20, 0));
+
+        JPanel namePanel = new JPanel(new BorderLayout());
+        namePanel.add(new JLabel("Code"), BorderLayout.NORTH);
+        namePanel.add(nameField, BorderLayout.CENTER);
+
+        JPanel nationalityPanel = new JPanel(new BorderLayout());
+        nationalityPanel.add(new JLabel("Title"), BorderLayout.NORTH);
+        nationalityPanel.add(nationalityField, BorderLayout.CENTER);
+
+        JPanel stylePanel = new JPanel(new BorderLayout());
+        stylePanel.add(new JLabel("Location"), BorderLayout.NORTH);
+        stylePanel.add(styleField, BorderLayout.CENTER);
+
+        
+        fieldsPanel.add(namePanel);//min pages length
+        fieldsPanel.add(nationalityPanel);//published released before
+        fieldsPanel.add(stylePanel);//Author/Director
+
+        // Add search button.
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(e -> {
+            // Handle search.
+        });
+
+        // Add reset button button.
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(e -> {
+            // Handle Reset.
+
+            nameField.setText("");
+            nationalityField.setText("");
+            styleField.setText("");
+        });
+
+        // Add Add button.
+        JButton addButton = new JButton("Add New");
+        addButton.addActionListener(e -> {
+            // Handle Add.
+        });
+
+        // Add delete button.
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new ActionListener() {
+            // Handle delete.
+            public void actionPerformed(ActionEvent e) {
+                // Get name from user
+                String name = JOptionPane.showInputDialog("Enter Director Name To Delete");
+                // delete Director in database
+                // database.deleteAuthor(name);
+            }
+        });           
+
+        // Add buttons to the panel.
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(searchButton);
+        buttonPanel.add(resetButton);
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
+
+        // Create table with 5 columns.
+        String[] columnNames = {
+            "Name", "Nationality", "Style", "Films", ""
+        };
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        table = new JTable(model);
+
+        // Create a JScrollPane and add the table to it.
+        JScrollPane scrollPane = new JScrollPane(table);             
+
+        // Add the fields and buttons to the main panel.
+        add(fieldsPanel, BorderLayout.NORTH);
+        add(buttonPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
+    }
+}
+    
