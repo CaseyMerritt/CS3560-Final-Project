@@ -1,3 +1,4 @@
+import java.util.Date;
 
 public class FilmQuery extends ItemQuery {
 	private Integer maxLength;
