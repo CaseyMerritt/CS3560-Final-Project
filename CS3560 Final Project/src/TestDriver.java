@@ -2,7 +2,10 @@
 public class TestDriver
 {
 	public static void main(String args[])
-	{	
+	{
+		
+		new ApplicationWindow();
+		
 		Date date1 = new Date("October", 15, 2019);
 		Author author = new Author("You Suck At Cooking", "American", "cooking");
 		Book book = new Book("You Suck At Cooking", "A comedic cook book for beginners", "C120",
@@ -23,8 +26,6 @@ public class TestDriver
 		Loan loan2 = new Loan(2, loanDate2, dueDate2, "Entertainment", me, film);
 		
 		System.out.println(loan1);
-		System.out.println(loan2);
-		
-		
+		System.out.println(loan2);		
 	}
 }
