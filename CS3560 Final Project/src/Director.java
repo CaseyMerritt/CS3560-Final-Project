@@ -1,4 +1,5 @@
 import java.util.List;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

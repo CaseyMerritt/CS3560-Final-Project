@@ -118,32 +118,25 @@ public class Loan
 	
 	public double calculateEstimatedPrice()
 	{
-		double price = 0.0;
-		/* TODO
-		 * price = item.dailyPrice * number of days between dueDate and loanDate
-		 */
+		double price = item.getDailyPrice() * calculateDaysBetweenDates(dueDate, loanDate);
 		return price;
 	}
 	
 	public double calculateFines()
 	{
-		double fines = 0.0;
-		/* TODO
-		 * fines = item.dailyPrice * number of days between dueDate and returnDate
-		 * fines += fines * 0.1
-		 */
+		double fines = item.getDailyPrice() * calculateDaysBetweenDates(dueDate, returnDate);
+		fines += fines * 0.1;
 		return fines;
 	}
 	
 	public double calculatePrice()
 	{
 		double price = 0.0;
-		/* TODO
-		 * if returnDate is past dueDate
-		 * 		price = calculateEstimatedPrice() + calculateFines()
-		 * else
-		 * 		price = item.dailyPrice * number of days between loanDate and returnDate
-		 */
+		if (returnDate.compareTo(dueDate) > 0) {	// returnDate past dueDate
+			price = calculateEstimatedPrice() + calculateFines();
+		} else {
+			price = item.getDailyPrice() * calculateDaysBetweenDates(loanDate, returnDate);
+		}
 		return price;
 	}
 
