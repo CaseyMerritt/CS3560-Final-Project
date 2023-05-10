@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -29,7 +30,7 @@ public class Book extends Item
 	private String publisher;
 	@Column(name = "publication_date")
 	private Date publicationDate;
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "books_authors",
 			schema = "library",
 			joinColumns = @JoinColumn(name = "book_code"),
@@ -197,7 +198,7 @@ public class Book extends Item
 			typedQuery.setParameter("authorName", bookQuery.getAuthorName());
 		}
 		
-		List<Book> books = session.createQuery(query).getResultList();
+		List<Book> books = typedQuery.getResultList();
 		
 		session.getTransaction().commit();
 		

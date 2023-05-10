@@ -1,4 +1,5 @@
 import java.util.Date;
+import java.util.List;
 
 public class ItemDriver {
 	
@@ -14,6 +15,14 @@ public class ItemDriver {
 		book.addAuthor(author);
 		
 		book.create();
+		
+		BookQuery query = new BookQuery();
+		query.setAuthorName("Name");
+		List<Book> theBooks = Book.findBy(query);
+		
+		for (Book b : theBooks) {
+			System.out.println(b);
+		}
 		
 		book.removeAuthor(author);
 		book.update();
