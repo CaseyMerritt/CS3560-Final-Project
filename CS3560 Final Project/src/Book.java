@@ -1,11 +1,10 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -22,7 +21,6 @@ import org.hibernate.SessionFactory;
 
 @Entity
 @Table(name = "books", schema = "library")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Book extends Item
 {
 	@Column(name = "pages")
@@ -33,8 +31,9 @@ public class Book extends Item
 	private Date publicationDate;
 	@ManyToMany
 	@JoinTable(name = "books_authors",
+			schema = "library",
 			joinColumns = @JoinColumn(name = "book_code"),
-			inverseJoinColumns = @JoinColumn(name = "student_id")
+			inverseJoinColumns = @JoinColumn(name = "author_id")
 	)
 	private List<Author> authors;
 	
@@ -61,9 +60,9 @@ public class Book extends Item
 		this.publisher = publisher;
 	}
 
-	public void setPublicationDate(Date publicationDate)
+	public void setPublicationDate(java.util.Date publicationDate)
 	{
-		this.publicationDate = publicationDate;
+		this.publicationDate = new Date(publicationDate.getTime());
 	}
 	
 	public void addAuthor(Author author) {
@@ -85,7 +84,7 @@ public class Book extends Item
 		return publisher;
 	}
 
-	public Date getPublicationDate()
+	public java.util.Date getPublicationDate()
 	{
 		return publicationDate;
 	}
@@ -158,11 +157,11 @@ public class Book extends Item
 		}
 		
 		if (bookQuery.getPublishedAfter() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(joined.get("publication_date"), bookQuery.getPublishedAfter().toString()));
+			predicates.add(cb.greaterThanOrEqualTo(joined.get("publication_date"), bookQuery.getPublishedAfter()));
 		}
 		
 		if (bookQuery.getPublishedBefore() != null) {
-			predicates.add(cb.lessThanOrEqualTo(joined.get("publication_date"), bookQuery.getPublishedBefore().toString()));
+			predicates.add(cb.lessThanOrEqualTo(joined.get("publication_date"), bookQuery.getPublishedBefore()));
 		}
 		
 		if (bookQuery.getPublisher() != null) {

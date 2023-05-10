@@ -1,3 +1,4 @@
+import java.util.Date;
 
 public class ItemDriver {
 	
@@ -9,7 +10,7 @@ public class ItemDriver {
 		Book book = new Book("Title", "Description", "Location", 10.0);
 		book.setPages(100);
 		book.setPublisher("Publisher");
-		book.setPublicationDate(new Date("May", 2, 2023));
+		book.setPublicationDate(new Date());
 		book.addAuthor(author);
 		
 		book.create();
