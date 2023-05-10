@@ -126,61 +126,67 @@ public class Book extends Item
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
 		if (bookQuery.getCode() != null) {
-			predicates.add(cb.equal(joined.get("code"), cb.parameter(String.class, "code")));
+			predicates.add(cb.equal(root.get("code"), bookQuery.getCode()));
 		}
 		
+		
+		
 		if (bookQuery.getTitle() != null) {
-			predicates.add(cb.like(joined.get("title"), cb.parameter(String.class, "title")));
+			predicates.add(cb.like(root.get("title"), cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "title"), "%")
+			)));
 		}
 		
 		if (bookQuery.getLocation() != null) {
-			predicates.add(cb.like(joined.get("location"), cb.parameter(String.class, "location")));
+			predicates.add(cb.like(root.get("location"), cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "location"), "%")
+			)));
 		}
 		
 		if (bookQuery.getMaxDailyPrice() != null) {
-			predicates.add(cb.lessThanOrEqualTo(joined.get("daily_price"), bookQuery.getMaxDailyPrice()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("daily_price"), bookQuery.getMaxDailyPrice()));
 		}
 		
 		if (bookQuery.getMinDailyPrice() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(joined.get("daily_price"), bookQuery.getMinDailyPrice()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("daily_price"), bookQuery.getMinDailyPrice()));
 		}
 		
 		if (bookQuery.isOnlyAvailable()) {
-			predicates.add(cb.equal(joined.get("available"), true));
+			predicates.add(cb.equal(root.get("available"), true));
 		}
 		
 		if (bookQuery.getMaxPages() != null) {
-			predicates.add(cb.lessThanOrEqualTo(joined.get("pages"), bookQuery.getMaxPages()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("pages"), bookQuery.getMaxPages()));
 		}
 		
 		if (bookQuery.getMinPages() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(joined.get("pages"), bookQuery.getMinPages()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("pages"), bookQuery.getMinPages()));
 		}
 		
 		if (bookQuery.getPublishedAfter() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(joined.get("publication_date"), bookQuery.getPublishedAfter()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("publication_date"), bookQuery.getPublishedAfter()));
 		}
 		
 		if (bookQuery.getPublishedBefore() != null) {
-			predicates.add(cb.lessThanOrEqualTo(joined.get("publication_date"), bookQuery.getPublishedBefore()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("publication_date"), bookQuery.getPublishedBefore()));
 		}
 		
 		if (bookQuery.getPublisher() != null) {
-			predicates.add(cb.like(joined.get("publisher"), cb.parameter(String.class, "publisher")));
+			predicates.add(cb.like(root.get("publisher"), cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "publisher"), "%")
+			)));
 		}
 		
 		if (bookQuery.getAuthorName() != null) {
-			predicates.add(cb.like(joined.get("name"), cb.parameter(String.class, "authorName")));
+			predicates.add(cb.like(joined.get("name"), cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "authorName"), "%")
+			)));
 		}
 		
 		if (predicates.size() > 0) 
 			query = query.where(cb.and(predicates.toArray(new Predicate[0])));
 		
 		TypedQuery<Book> typedQuery = session.createQuery(query);
-		
-		if (bookQuery.getCode() != null) {
-			typedQuery.setParameter("code", bookQuery.getCode());
-		}
 		
 		if (bookQuery.getTitle() != null) {
 			typedQuery.setParameter("title", bookQuery.getTitle());

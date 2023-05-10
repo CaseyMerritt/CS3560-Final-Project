@@ -89,15 +89,19 @@ public class Film extends Item
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
 		if (filmQuery.getCode() != null) {
-			predicates.add(cb.equal(joined.get("code"), cb.parameter(String.class, "code")));
+			predicates.add(cb.equal(joined.get("code"), filmQuery.getCode()));
 		}
 		
 		if (filmQuery.getTitle() != null) {
-			predicates.add(cb.like(joined.get("title"), cb.parameter(String.class, "title")));
+			predicates.add(cb.like(joined.get("title"), cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "title"), "%")
+			)));
 		}
 		
 		if (filmQuery.getLocation() != null) {
-			predicates.add(cb.like(joined.get("location"), cb.parameter(String.class, "location")));
+			predicates.add(cb.like(joined.get("location"), cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "location"), "%")
+			)));
 		}
 		
 		if (filmQuery.getMaxDailyPrice() != null) {
@@ -129,17 +133,15 @@ public class Film extends Item
 		}
 		
 		if (filmQuery.getDirectorName() != null) {
-			predicates.add(cb.like(joined.get("name"), cb.parameter(String.class, "directorName")));
+			predicates.add(cb.like(joined.get("name"),cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "directorName"), "%")
+			)));
 		}
 		
 		if (predicates.size() > 0) 
 			query = query.where(cb.and(predicates.toArray(new Predicate[0])));
 		
 		TypedQuery<Film> typedQuery = session.createQuery(query);
-		
-		if (filmQuery.getCode() != null) {
-			typedQuery.setParameter("code", filmQuery.getCode());
-		}
 		
 		if (filmQuery.getTitle() != null) {
 			typedQuery.setParameter("title", filmQuery.getTitle());

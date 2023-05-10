@@ -4,20 +4,20 @@ import java.util.List;
 public class ItemDriver {
 	
 	public static void main(String[] args) {
-		Author author = new Author("Name", "Nationality", "Subject");
+		Author author = new Author("Book Author", "Book Author Nationality", "Book Author Subject");
 		
 		author.create();
 		
-		Book book = new Book("Title", "Description", "Location", 10.0);
+		Book book = new Book("Book Title", "Book Description", "Book Location", 10.0);
 		book.setPages(100);
-		book.setPublisher("Publisher");
+		book.setPublisher("Book Publisher");
 		book.setPublicationDate(new Date());
 		book.addAuthor(author);
 		
 		book.create();
 		
 		BookQuery query = new BookQuery();
-		query.setAuthorName("Name");
+		query.setTitle("Book");
 		List<Book> theBooks = Book.findBy(query);
 		
 		for (Book b : theBooks) {
