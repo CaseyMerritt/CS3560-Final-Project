@@ -1,25 +1,58 @@
-import java.sql.Date;
-import java.time.LocalDate;
+import java.util.Date;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Predicate;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+@Entity
+@Table(name = "loans", schema = "library")
 public class Loan
 {
-	private int number; // is this the id for the loan?
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "number")
+	private int number;
+	@Column(name = "loan_date")
 	private Date loanDate; // date loan was created
+	@Column(name = "due_date")
 	private Date dueDate;
+	@Column(name = "return_date")
 	private Date returnDate; // actual date returned
+	@Column(name = "course")
 	private String course;
+	@Column(name = "paid_amount")
 	private double paidAmount;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "student_id")
 	private Student student;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "item_code")
 	private Item item;
 	
 	// constructor
-	public Loan(int number, Date loanDate, Date dueDate, String course, Student student, Item item)
+	public Loan(Student student, Item item, String course, int numberDays)
 	{
-		// FIXME object model has numberDays parameter, how does that fit here?
-		this.number = number;
-		this.loanDate = loanDate;
-		this.dueDate = dueDate;
+		this.loanDate = new Date();
+		this.dueDate = new Date(loanDate.getTime() + TimeUnit.DAYS.toMillis(numberDays));
 		this.course = course;
 		this.student = student;
 		this.item = item;
@@ -153,16 +186,92 @@ public class Loan
 	 * Converted into java.time.LocalDate class so they can be operated on
 	 */
 	public long calculateDaysBetweenDates(Date start, Date end){
-		long days = 0;
-		try {
-			LocalDate startDate = start.toLocalDate();
-			LocalDate endDate = end.toLocalDate();
-			days = ChronoUnit.DAYS.between(startDate,endDate);
-		} catch (Exception e) {
-			// TODO: handle exception, might happen if returnDate has not be initialized
-		}
+		long days = ChronoUnit.DAYS.between(start.toInstant(),end.toInstant());
+
 		return days;
 	}
 	
-	// TODO implement findBy() here
+	public static List<Loan> findBy(LoanQuery loanQuery) {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Loan> query = cb.createQuery(Loan.class);
+		Root<Loan> root = query.from(Loan.class);
+		Join<Loan, Student> joinStudent = root.join("student");
+		Join<Loan, Item> joinItem = root.join("item");
+		
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		
+		if (loanQuery.getNumber() != null) {
+			predicates.add(cb.equal(root.get("number"), loanQuery.getNumber()));
+		}
+		
+		if (loanQuery.getItemTitle() != null) {
+			predicates.add(cb.like(joinItem.get("title"), cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "itemTitle"), "%")
+			)));
+		}
+		
+		if (loanQuery.getStudentName() != null) {
+			predicates.add(cb.like(joinStudent.get("name"), cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "studentName"), "%")
+			)));
+		}
+		
+		if (loanQuery.getBroncoId() != null) {
+			predicates.add(cb.equal(joinStudent.get("bronco_id"), loanQuery.getBroncoId()));
+		}
+		
+		if (loanQuery.getCourse() != null) {
+			predicates.add(cb.like(root.get("course"), cb.concat("%", 
+					cb.concat(cb.parameter(String.class, "course"), "%")
+			)));
+		}
+		
+		if (loanQuery.isOnlyOverdue()) {
+			predicates.add(cb.lessThan(root.get("due_date"), new Date()));
+		}
+		
+		if (loanQuery.getDueAfter() != null) {
+			predicates.add(cb.greaterThanOrEqualTo(root.get("due_date"), loanQuery.getDueAfter()));
+		}
+		
+		if (loanQuery.getDueBefore() != null) {
+			predicates.add(cb.lessThanOrEqualTo(root.get("due_date"), loanQuery.getDueBefore()));
+		}
+		
+		if (loanQuery.getLoanedAfter() != null) {
+			predicates.add(cb.greaterThanOrEqualTo(root.get("loan_date"), loanQuery.getLoanedAfter()));
+		}
+		
+		if (loanQuery.getLoanedBefore() != null) {
+			predicates.add(cb.lessThanOrEqualTo(root.get("loan_date"), loanQuery.getLoanedBefore()));
+		}
+		
+		if (predicates.size() > 0) 
+			query = query.where(cb.and(predicates.toArray(new Predicate[0])));
+		
+		TypedQuery<Loan> typedQuery = session.createQuery(query);
+		
+		if (loanQuery.getItemTitle() != null) {
+			typedQuery.setParameter("itemTitle", loanQuery.getItemTitle());
+		}
+		
+		if (loanQuery.getStudentName() != null) {
+			typedQuery.setParameter("studentName", loanQuery.getStudentName());
+		}
+		
+		if (loanQuery.getCourse() != null) {
+			typedQuery.setParameter("course", loanQuery.getCourse());
+		}
+		
+		List<Loan> loans = typedQuery.getResultList();
+		
+		session.getTransaction().commit();
+		
+		return loans;
+	}
 }
