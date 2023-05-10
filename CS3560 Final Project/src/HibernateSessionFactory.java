@@ -15,6 +15,7 @@ public class HibernateSessionFactory {
 				                 .addAnnotatedClass(Student.class)
 				                 .addAnnotatedClass(Item.class)
 				                 .addAnnotatedClass(Book.class)
+				                 .addAnnotatedClass(Film.class)
 				                 .buildSessionFactory();
 		}
 		
