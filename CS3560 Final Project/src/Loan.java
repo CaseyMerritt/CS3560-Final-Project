@@ -1,3 +1,6 @@
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 public class Loan
 {
 	private int number; // is this the id for the loan?
@@ -142,6 +145,22 @@ public class Loan
 		 * 		price = item.dailyPrice * number of days between loanDate and returnDate
 		 */
 		return price;
+	}
+
+	/*
+	 * Dates stored in instance and database using java.sql.Date class
+	 * Converted into java.time.LocalDate class so they can be operated on
+	 */
+	public long calculateDaysBetweenDates(Date start, Date end){
+		long days = 0;
+		try {
+			LocalDate startDate = start.toLocalDate();
+			LocalDate endDate = end.toLocalDate();
+			days = ChronoUnit.DAYS.between(startDate,endDate);
+		} catch (Exception e) {
+			// TODO: handle exception, might happen if returnDate has not be initialized
+		}
+		return days;
 	}
 	
 	// TODO implement findBy() here
