@@ -113,18 +113,19 @@ public class Loan
 	public String toString()
 	{
 		return student.toString() + "\n-- Item details --\n" + item.toString() + "Course: " + course +
-			   "\nLoan date: " + loanDate + "Due date: " + dueDate;
+			   "\nLoan date: " + loanDate + "\nDue date: " + dueDate + "\nReturn date: " + returnDate;
 	}
 	
 	public double calculateEstimatedPrice()
 	{
-		double price = item.getDailyPrice() * calculateDaysBetweenDates(dueDate, loanDate);
+		double price = item.getDailyPrice() * calculateDaysBetweenDates(loanDate, dueDate);
 		return price;
 	}
 	
 	public double calculateFines()
 	{
-		double fines = item.getDailyPrice() * calculateDaysBetweenDates(dueDate, returnDate);
+		double fines = 0.0;
+		fines = item.getDailyPrice() * calculateDaysBetweenDates(dueDate, returnDate);
 		fines += fines * 0.1;
 		return fines;
 	}
@@ -142,7 +143,7 @@ public class Loan
 
 	/*
 	 * Dates stored in instance and database using java.sql.Date class
-	 * Converted into java.time.LocalDate class so they can be operated on
+	 * Converted into java.time.LocalDate class so DAYS.between() can be used
 	 */
 	public long calculateDaysBetweenDates(Date start, Date end){
 		long days = 0;
@@ -151,7 +152,9 @@ public class Loan
 			LocalDate endDate = end.toLocalDate();
 			days = ChronoUnit.DAYS.between(startDate,endDate);
 		} catch (Exception e) {
-			// TODO: handle exception, might happen if returnDate has not be initialized
+			System.out.println("Error occurred while doing math with dates.\n" + 
+							   "Date 1: " + start + "\n" +
+							   "Date 2: " + end);
 		}
 		return days;
 	}

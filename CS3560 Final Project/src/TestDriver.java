@@ -27,6 +27,22 @@ public class TestDriver
 		Loan loan2 = new Loan(2, loanDate2, dueDate2, "Entertainment", me, film);
 		
 		System.out.println(loan1);
-		System.out.println(loan2);		
+		System.out.println("------------");
+		System.out.println(loan2);
+		System.out.println("------------");
+
+		// Testing loan calculation
+		loan1.setReturnDate(new Date(2023-1900,1,28));
+		System.out.println(loan1);
+		System.out.println("Estimated Price: $"+loan1.calculateEstimatedPrice());
+		System.out.println("Total Price: $"+loan1.calculatePrice());
+
+		System.out.println("------------");
+
+		loan2.setReturnDate(new Date(2023-1900,5,8));
+		System.out.println(loan2);
+		System.out.println("Estimated Price: $"+loan2.calculateEstimatedPrice());
+		System.out.println("Total Price: $"+loan2.calculatePrice());
+
 	}
 }
