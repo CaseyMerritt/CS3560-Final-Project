@@ -35,15 +35,15 @@ public class DirectorsTabPanel extends JPanel {
         fieldsPanel.setLayout(new GridLayout(1, 3, 20, 0));
 
         JPanel namePanel = new JPanel(new BorderLayout());
-        namePanel.add(new JLabel("Code"), BorderLayout.NORTH);
+        namePanel.add(new JLabel("Name"), BorderLayout.NORTH);
         namePanel.add(nameField, BorderLayout.CENTER);
 
         JPanel nationalityPanel = new JPanel(new BorderLayout());
-        nationalityPanel.add(new JLabel("Title"), BorderLayout.NORTH);
+        nationalityPanel.add(new JLabel("Nationality"), BorderLayout.NORTH);
         nationalityPanel.add(nationalityField, BorderLayout.CENTER);
 
         JPanel stylePanel = new JPanel(new BorderLayout());
-        stylePanel.add(new JLabel("Location"), BorderLayout.NORTH);
+        stylePanel.add(new JLabel("Style"), BorderLayout.NORTH);
         stylePanel.add(styleField, BorderLayout.CENTER);
 
         
