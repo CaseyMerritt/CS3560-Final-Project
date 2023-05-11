@@ -58,12 +58,46 @@ public class StudentsTabPanel extends JPanel {
             broncoIdField.setText("");
         });
 
+        /* 
         // Add Add button.
         JButton addButton = new JButton("Add New");
         addButton.addActionListener(e -> {
             // Handle Add.
+            
+        });
+        */
+        // Add Add button.
+        JButton addButton = new JButton("Add New");
+        addButton.addActionListener(new ActionListener() {
+            // Handle Add.
+            public void actionPerformed(ActionEvent e) {
+                // Get values from input fields
+                String name = nameField.getText();
+                String broncoId = broncoIdField.getText();
+
+                // Validate if the required fields are filled
+                if (name.isEmpty() || broncoId.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill in all the fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Create a new row object with the input values
+                Object[] rowData = {broncoId, name, "", "", "", ""}; // Modify the last two empty columns as per your requirements
+
+                // Add the new row to the table model
+                DefaultTableModel model = (DefaultTableModel) table.getModel();
+                model.addRow(rowData);
+
+                // Clear the input fields
+                nameField.setText("");
+                broncoIdField.setText("");
+
+                // Display a success message
+                JOptionPane.showMessageDialog(null, "Student added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            }
         });
 
+        
         // Add delete button.
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener(new ActionListener() {
