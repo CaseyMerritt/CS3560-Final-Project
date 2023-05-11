@@ -180,16 +180,16 @@ public class Loan
 	 * Converted into java.time.LocalDate class so DAYS.between() can be used
 	 */
 	public long calculateDaysBetweenDates(Date start, Date end){
-		long days = 0;
-		try {
-			LocalDate startDate = start.toLocalDate();
-			LocalDate endDate = end.toLocalDate();
-			days = ChronoUnit.DAYS.between(startDate,endDate);
-		} catch (Exception e) {
-			System.out.println("Error occurred while doing math with dates.\n" + 
-							   "Date 1: " + start + "\n" +
-							   "Date 2: " + end);
-		}
+		//long days = 0;
+		//try {
+			//LocalDate startDate = start.toLocalDate();
+			//LocalDate endDate = end.toLocalDate();
+			//days = ChronoUnit.DAYS.between(startDate,endDate);
+		//} catch (Exception e) {
+			//System.out.println("Error occurred while doing math with dates.\n" + 
+							   //"Date 1: " + start + "\n" +
+							   //"Date 2: " + end);
+		//}
 		long days = ChronoUnit.DAYS.between(start.toInstant(),end.toInstant());
     
 		return days;
