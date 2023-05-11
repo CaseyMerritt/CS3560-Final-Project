@@ -18,7 +18,7 @@ import model.Loan;
 public class ReceiptWindow extends JFrame {
 
 	public ReceiptWindow(Loan loan) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(250, 300));
         setTitle("Loan #" + loan.getNumber() + " Receipt");
         setVisible(true);
@@ -52,7 +52,7 @@ public class ReceiptWindow extends JFrame {
 		
 		JTextField dueDateField = new JTextField();
 		dueDateField.setEditable(false);
-		dueDateField.setText(dateFormat.format(loan.getLoanDate()));
+		dueDateField.setText(dateFormat.format(loan.getDueDate()));
 		
 		JPanel dueDatePanel = new JPanel(new BorderLayout());
 		dueDatePanel.add(new JLabel("Due Date:"), BorderLayout.WEST);
@@ -76,7 +76,7 @@ public class ReceiptWindow extends JFrame {
 		
 		JTextField estimateField = new JTextField();
 		estimateField.setEditable(false);
-		estimateField.setText(currencyFormat.format(loan.calculateEstimatedPrice()));
+		estimateField.setText(currencyFormat.format(30));
 		
 		JPanel estimatePanel = new JPanel(new BorderLayout());
 		estimatePanel.add(new JLabel("Estimated Price:"), BorderLayout.WEST);

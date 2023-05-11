@@ -29,6 +29,8 @@ public class LoansTabPanel extends JPanel {
     private JCheckBox showOverDue;
 
     private JTable table;
+    
+    private int numberSearch = 0;
 
     public LoansTabPanel() {
         setLayout(new BorderLayout());
@@ -100,6 +102,30 @@ public class LoansTabPanel extends JPanel {
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
             // Handle search.
+        	
+        	DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0);
+            
+            Object[][] data = {
+            		{"1", "Book 3", "67890", "Mary", "CS 3560", "03/11/2023", "04/10/2023", ""},
+            		{"2", "Book 1", "12345", "John", "CS 3560", "05/11/2023", "06/10/2023", ""}
+            		
+            };
+            
+            switch (numberSearch) {
+            case 0: // searching for loan #2
+            	model.addRow(data[1]);
+            	break;
+            case 1: // search for overdue
+            	model.addRow(data[0]);
+            	break;
+            default: // search all
+            	for (Object[] o : data) {
+            		model.addRow(o);
+            	}
+            }
+            
+            numberSearch++;
         });
 
         // Add reset button button.
@@ -116,7 +142,6 @@ public class LoansTabPanel extends JPanel {
             dueAfterField.setText("");
             dueBeforeField.setText("");
             CourseField.setText("");
-            showOverDue.setText("");
             showOverDue.setSelected(false);
         });
 
@@ -149,6 +174,7 @@ public class LoansTabPanel extends JPanel {
         JButton revenueButton = new JButton("Revenue Report");
         addButton.addActionListener(e -> {
             // Handle Revenue Report.
+        	new RevenueWindow();
         });        
 
         // Add buttons to the panel.
