@@ -49,7 +49,19 @@ public class StudentsTabPanel extends JPanel {
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
             // Handle search.
-            
+            String name = nameField.getText();
+            String broncoId = broncoIdField.getText();
+
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0);
+
+            Object[] rowData = {broncoId, name, "", "", "", ""};
+            model.addRow(rowData);
+
+            if(model.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(null, 
+                "No results found.", "Search", JOptionPane.INFORMATION_MESSAGE);
+            }
         });
 
         // Add reset button button.
