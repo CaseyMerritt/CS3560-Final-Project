@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class StudentsTabPanel extends JPanel {
     private JTextField broncoIdField;
@@ -48,6 +49,7 @@ public class StudentsTabPanel extends JPanel {
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
             // Handle search.
+            
         });
 
         // Add reset button button.
@@ -58,14 +60,6 @@ public class StudentsTabPanel extends JPanel {
             broncoIdField.setText("");
         });
 
-        /* 
-        // Add Add button.
-        JButton addButton = new JButton("Add New");
-        addButton.addActionListener(e -> {
-            // Handle Add.
-            
-        });
-        */
         // Add Add button.
         JButton addButton = new JButton("Add New");
         addButton.addActionListener(new ActionListener() {
@@ -103,16 +97,29 @@ public class StudentsTabPanel extends JPanel {
         deleteButton.addActionListener(new ActionListener() {
             // Handle delete.
             public void actionPerformed(ActionEvent e) {
-                // Get bronco id from user
-                String deleteStudentTerm = JOptionPane.showInputDialog("Enter Bronco ID To Delete");
+                int selectedRowIndex = table.getSelectedRow();
 
-                try{
-                    int broncoId = Integer.parseInt(deleteStudentTerm);
-                    // delete Student in database
-                    // database.deleteStudent(broncoId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid loan Number.", "Error", JOptionPane.ERROR_MESSAGE);
+                if(selectedRowIndex >= 0) {
+                    // Get broncoId from row you want to delete
+                    String broncoId = table.getValueAt(selectedRowIndex, 0).toString();
+
+                    // confirm deletion
+                    int option = JOptionPane.showConfirmDialog(null, 
+                    "Are you sure you want to delete the student with this BroncoId", 
+                    "Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
+                    
+                    DefaultTableModel model= (DefaultTableModel) table.getModel();
+                    
+                    if(option == JOptionPane.YES_OPTION){
+                        model.removeRow(selectedRowIndex);
+
+                        // Display confirmation of deletion
+                        JOptionPane.showMessageDialog(null, "Student deleted");
+                    } 
+                    else {
+                        JOptionPane.showMessageDialog(null, "Please select a student to delete.",
+                         "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });           
