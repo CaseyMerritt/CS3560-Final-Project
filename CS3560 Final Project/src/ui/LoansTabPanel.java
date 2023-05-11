@@ -172,7 +172,7 @@ public class LoansTabPanel extends JPanel {
         
         // Add Revenue button.
         JButton revenueButton = new JButton("Revenue Report");
-        addButton.addActionListener(e -> {
+        revenueButton.addActionListener(e -> {
             // Handle Revenue Report.
         	new RevenueWindow();
         });        
