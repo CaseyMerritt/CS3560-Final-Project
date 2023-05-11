@@ -1,3 +1,4 @@
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -22,6 +23,7 @@ import org.hibernate.SessionFactory;
 
 @Entity
 @Table(name = "books", schema = "library")
+
 public class Book extends Item
 {
 	@Column(name = "pages")
