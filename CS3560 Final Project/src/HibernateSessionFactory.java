@@ -5,7 +5,9 @@ public class HibernateSessionFactory {
 	
 	private static SessionFactory sessionFactory;
 	
-	public static SessionFactory getSessionFactory() {
+	private HibernateSessionFactory() {}
+	
+	public synchronized static SessionFactory getSessionFactory() {
 		if (sessionFactory == null) {
 			sessionFactory = new Configuration()
 								 .configure("hibernate.cfg.xml")
@@ -13,6 +15,9 @@ public class HibernateSessionFactory {
 				                 .addAnnotatedClass(Author.class)
 				                 .addAnnotatedClass(Director.class)
 				                 .addAnnotatedClass(Student.class)
+				                 .addAnnotatedClass(Item.class)
+				                 .addAnnotatedClass(Book.class)
+				                 .addAnnotatedClass(Film.class)
 				                 .buildSessionFactory();
 		}
 		
