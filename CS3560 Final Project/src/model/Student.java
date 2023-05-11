@@ -25,8 +25,6 @@ public class Student extends Person
 	@Id
 	@Column(name = "bronco_id")
 	private int broncoId;
-	@OneToMany(fetch = FetchType.EAGER)
-	private List<Loan> loans;
 	
 	public Student() {
 		super(null);
@@ -59,6 +57,9 @@ public class Student extends Person
 	}
 	
 	public boolean hasOverdueItems() {
+		LoanQuery loanQuery = new LoanQuery();
+		loanQuery.setBroncoId(broncoId);
+		List<Loan> loans = Loan.findBy(loanQuery);
 		for (Loan loan : loans) {
 			if (loan.isOverdue()) return true;
 		}
@@ -67,6 +68,9 @@ public class Student extends Person
 	}
 	
 	public double calculateBalance() {
+		LoanQuery loanQuery = new LoanQuery();
+		loanQuery.setBroncoId(broncoId);
+		List<Loan> loans = Loan.findBy(loanQuery);
 		double totalBalance = 0.0;
 		
 		for (Loan loan : loans) {
