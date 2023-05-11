@@ -21,6 +21,8 @@ public class StudentsTabPanel extends JPanel {
     private JTextField nameField;
 
     private JTable table;
+    
+    private int numTimesSearch = 0;
 
     public StudentsTabPanel() {
         setLayout(new BorderLayout());
@@ -48,8 +50,27 @@ public class StudentsTabPanel extends JPanel {
         // Add search button.
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
-            // Handle search.
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0);
             
+            Object[] data = {"12345", "John", "0", "0", "$0.00"};
+            // mary has loaned item with daily price of $1.00 and length of 30 days, 30 days overdue
+            Object[] data2 = {"67890", "Mary", "1", "1", "$63.00"};
+            switch (numTimesSearch) {
+            case 0: // after adding John
+            	model.addRow(data);
+            	break;
+            case 1: // then reset and search
+            	model.addRow(data);
+            	model.addRow(data2);
+            	break;
+            default: // after loaning item to John
+            	data[2] = "1";
+            	model.addRow(data);
+            	model.addRow(data2);
+            }
+            
+            numTimesSearch++;
         });
 
         // Add reset button button.
@@ -66,25 +87,25 @@ public class StudentsTabPanel extends JPanel {
             // Handle Add.
             public void actionPerformed(ActionEvent e) {
                 // Get values from input fields
-                String name = nameField.getText();
-                String broncoId = broncoIdField.getText();
-
-                // Validate if the required fields are filled
-                if (name.isEmpty() || broncoId.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Please fill in all the fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                // Create a new row object with the input values
-                Object[] rowData = {broncoId, name, "", "", "", ""}; // Modify the last two empty columns as per your requirements
-
-                // Add the new row to the table model
-                DefaultTableModel model = (DefaultTableModel) table.getModel();
-                model.addRow(rowData);
-
-                // Clear the input fields
-                nameField.setText("");
-                broncoIdField.setText("");
+//                String name = nameField.getText();
+//                String broncoId = broncoIdField.getText();
+//
+//                // Validate if the required fields are filled
+//                if (name.isEmpty() || broncoId.isEmpty()) {
+//                    JOptionPane.showMessageDialog(null, "Please fill in all the fields.", "Error", JOptionPane.ERROR_MESSAGE);
+//                    return;
+//                }
+//
+//                // Create a new row object with the input values
+//                Object[] rowData = {broncoId, name, "", "", "", ""}; // Modify the last two empty columns as per your requirements
+//
+//                // Add the new row to the table model
+//                DefaultTableModel model = (DefaultTableModel) table.getModel();
+//                model.addRow(rowData);
+//
+//                // Clear the input fields
+//                nameField.setText("");
+//                broncoIdField.setText("");
 
                 // Display a success message
                 JOptionPane.showMessageDialog(null, "Student added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
