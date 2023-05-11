@@ -1,3 +1,4 @@
+package model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -120,9 +121,11 @@ public class Item implements CRUDOperations
 				location + "\nDaily price: $" + formatPrice + "\nAvailability: " + msg + "\n";
 	}
 	
-	// TODO implement makeLoanTo
-	public Loan makeLoanTo(Student student) {
-		return null;
+	public Loan makeLoanTo(Student student, int numberDays, String course) {
+		Loan loan = new Loan(student, this, course, numberDays);
+		loan.create();
+		
+		return loan;
 	}
 	
 	@Override
