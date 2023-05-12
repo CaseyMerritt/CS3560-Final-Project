@@ -47,6 +47,10 @@ public abstract class TabPanel extends JPanel {
         fieldsPanel.add(panel);
 	}
 	
+	protected final void addField(JComponent field) {
+		fieldsPanel.add(field);
+	}
+	
 	protected final void addButton(JButton button) {
 		buttonPanel.add(button);
 	}
