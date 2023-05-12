@@ -15,6 +15,8 @@ public class DirectorWindow extends JFrame{
     private JPanel panel;
     private Director director;
 
+	// TODO make ui functional
+
     public DirectorWindow() {
 		setupWindow();
 		button.setText("Save");

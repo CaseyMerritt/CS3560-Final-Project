@@ -15,6 +15,8 @@ public class AuthorWindow extends JFrame{
     private JPanel panel;
     private Author author;
 
+	// TODO make ui functional
+
     public AuthorWindow() {
 		setupWindow();
 		button.setText("Save");

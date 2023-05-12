@@ -2,8 +2,12 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 import model.Item;
+import model.Book;
+import model.Film;
+import model.Author;
 
 public class ItemWindow extends JFrame{
 
@@ -11,11 +15,11 @@ public class ItemWindow extends JFrame{
     private JTextField titleField;
     private JTextField locationField;
     private JTextField lengthField;
-    private JTextField publishDateField;
+    private JTextField publishField;
     private JTextField creatorField;
     private JTextField dailyPriceField;
     private JTextArea descriptionField;
-    private JTextField authorsField;        // only displays if item is book
+    private JList<Author> authorsField;     // only displays if item is book
     private JTextField studentIdField;
     private JButton loanButton;
     private JButton button;                 // displays "Edit" or "Save" depending on when clicked
@@ -23,26 +27,42 @@ public class ItemWindow extends JFrame{
 
     private Item item;
 
-    public ItemWindow(){
+    public ItemWindow(Item item){
+        setupWindow(item);
+        // TODO get data from existing book or film object
+        // TODO create new book or film
+    }
+
+    public void setupWindow(Item item){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1000, 500));
-        setTitle("Item");   //TODO change title based on whether book or film
+        if(item instanceof Book){
+            setTitle("Book");
+        } else if (item instanceof Film){
+            setTitle("Film");
+        } else {
+            setTitle("Item");
+        }
         setVisible(true);
 
         codeField = new JTextField(20);
         titleField = new JTextField(20);
         locationField = new JTextField(20);
         lengthField = new JTextField(20);
-        publishDateField = new JTextField(20);
+        publishField = new JTextField(20);
         creatorField = new JTextField(20);
         dailyPriceField = new JTextField(20);
-        descriptionField = new JTextArea();
-        authorsField = new JTextField(20);  // TODO turn this into a list of authors
+        descriptionField = new JTextArea(5,50);
+        if(item instanceof Book){
+            authorsField = new JList<Author>();
+        } else {
+            authorsField = null;
+        }
         studentIdField = new JTextField(20);
         loanButton = new JButton();
         button = new JButton();
 
-        // Panels
+        // Field Panel
         JPanel codePanel = new JPanel(new BorderLayout());
         codePanel.add(new JLabel("Code"),BorderLayout.NORTH);
 		codePanel.add(codeField,BorderLayout.SOUTH);
@@ -56,60 +76,104 @@ public class ItemWindow extends JFrame{
 		locationPanel.add(locationField,BorderLayout.SOUTH);
 
         JPanel lengthPanel = new JPanel(new BorderLayout());
-        // TODO "Pages" if book, "Length" if film
-        lengthPanel.add(new JLabel("Length"),BorderLayout.NORTH);
+        if(item instanceof Book){
+            lengthPanel.add(new JLabel("Pages"),BorderLayout.NORTH);
+        } else {
+            lengthPanel.add(new JLabel("Length"),BorderLayout.NORTH);
+        }
 		lengthPanel.add(lengthField,BorderLayout.SOUTH);
 
         JPanel publishDatePanel = new JPanel(new BorderLayout());
-        // TODO "Publish Date" if book, "Release Date" if film
-        publishDatePanel.add(new JLabel("Publish Date"),BorderLayout.NORTH);
-		publishDatePanel.add(publishDateField,BorderLayout.SOUTH);
+        if(item instanceof Book){
+            publishDatePanel.add(new JLabel("Publish Date"),BorderLayout.NORTH);
+        } else {
+            publishDatePanel.add(new JLabel("Release Date"),BorderLayout.NORTH);
+        }
+		publishDatePanel.add(publishField,BorderLayout.SOUTH);
 
         JPanel creatorPanel = new JPanel(new BorderLayout());
-        // TODO "Publisher" if book, "Author" if film
-        creatorPanel.add(new JLabel("Creator"),BorderLayout.NORTH);
+        if(item instanceof Book){
+            creatorPanel.add(new JLabel("Publisher"),BorderLayout.NORTH);
+        } else if (item instanceof Film){
+            creatorPanel.add(new JLabel("Author"),BorderLayout.NORTH);
+        } else {
+            creatorPanel.add(new JLabel("Creator"),BorderLayout.NORTH);
+        }
 		creatorPanel.add(creatorField,BorderLayout.SOUTH);
 
         JPanel dailyPricePanel = new JPanel(new BorderLayout());
         dailyPricePanel.add(new JLabel("Daily Price"),BorderLayout.NORTH);
-		dailyPricePanel.add(publishDateField,BorderLayout.SOUTH);
+		dailyPricePanel.add(dailyPriceField,BorderLayout.SOUTH);
 
+        JPanel fieldPanel = new JPanel(new GridLayout(2, 4));
+        fieldPanel.add(codePanel);
+        fieldPanel.add(titlePanel);
+        fieldPanel.add(lengthPanel);
+        fieldPanel.add(locationPanel);
+        fieldPanel.add(publishDatePanel);
+        fieldPanel.add(creatorPanel);
+        fieldPanel.add(dailyPricePanel);
+
+        // Middle Panel
         JPanel descriptionPanel = new JPanel(new BorderLayout());
         descriptionPanel.add(new JLabel("Description"),BorderLayout.NORTH);
 		descriptionPanel.add(descriptionField,BorderLayout.SOUTH);
 
-        // TODO turn into a list of authors
         JPanel authorsPanel = new JPanel(new BorderLayout());
         authorsPanel.add(new JLabel("Authors"),BorderLayout.NORTH);
-		authorsPanel.add(authorsField,BorderLayout.SOUTH);
+		authorsPanel.add(new JScrollPane(authorsField),BorderLayout.SOUTH);
 
-        // TODO the box in the corner for loans, see mockup
+        JPanel middlePanel = new JPanel(new BorderLayout(1,2));
+        middlePanel.add(descriptionPanel,BorderLayout.WEST);
+        if(item instanceof Book){
+            middlePanel.add(authorsPanel,BorderLayout.EAST);
+        }
+
+        // Bottom Panel
         JPanel loanPanel = new JPanel(new BorderLayout());
         loanPanel.add(new JLabel("Loans"),BorderLayout.NORTH);
+
+        JPanel loanBoxPanel = new JPanel(new BorderLayout());
 
         JPanel studentIdPanel = new JPanel(new BorderLayout());
         studentIdPanel.add(new JLabel("Student Bronco ID"),BorderLayout.NORTH);
 		studentIdPanel.add(studentIdField,BorderLayout.SOUTH);
 
-        loanPanel.add(studentIdPanel,BorderLayout.SOUTH);
-        loanPanel.add(loanButton,BorderLayout.SOUTH);
+        loanBoxPanel.add(studentIdPanel,BorderLayout.WEST);
+        loanBoxPanel.add(loanButton,BorderLayout.EAST);
+        loanButton.setText("Loan");
+        loanBoxPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+        loanPanel.add(loanBoxPanel);
 
-        // TODO fix format
-        panel = new JPanel(new GridLayout(3,5, 20, 0));
+        JPanel bottomPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridwidth = 5;
+        c.gridheight = 2;
+        
 
-        panel.add(codePanel);
-        panel.add(titlePanel);
-        panel.add(lengthPanel);
-        panel.add(locationPanel);
-        panel.add(publishDatePanel);
-        panel.add(creatorPanel);
-        panel.add(dailyPricePanel);
-        //panel.add(descriptionPanel);
+        c.weightx = 1;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.SOUTHWEST;
+        bottomPanel.add(button,c);
 
-        //TODO if book, add authors list panel
+        c.gridx = 1;
+        bottomPanel.add(Box.createHorizontalStrut(150),c);
 
-        //panel.add(button);
-        //panel.add(loanPanel);
+        c.weightx = 2;
+        c.gridx = 4;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.SOUTHEAST;
+        bottomPanel.add(loanBoxPanel,c);
+
+        
+        button.setText("Edit");
+        //TODO when button is clicked, change text to "Save"
+
+        panel = new JPanel(new GridLayout(3,1));
+        panel.add(fieldPanel);
+        panel.add(middlePanel);
+        panel.add(bottomPanel);
 
         add(panel);
         pack();
