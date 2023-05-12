@@ -1,4 +1,6 @@
 package model;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -11,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -27,7 +30,7 @@ public class Student extends Person
 	@Id
 	@Column(name = "bronco_id")
 	private int broncoId;
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
 	private List<Loan> loans;
 	
 	public Student() {
@@ -99,23 +102,23 @@ public class Student extends Person
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Student> query = cb.createQuery(Student.class);
 		Root<Student> root = query.from(Student.class);
-		query = query.select(root);
 		
-		Predicate where = null;
+		root.fetch("loans", JoinType.LEFT);
+		
+		List<Predicate> predicates = new ArrayList<>();
 		
 		if (name != null) {
-			where = cb.like(root.get("name"), "%" + name + "%");
+			predicates.add(cb.like(root.get("name"), "%" + name + "%"));
 		}
 		
 		if (broncoId != null) {
-			if (where == null)
-				where = cb.equal(root.get("broncoId"), broncoId.toString());
-			else
-				where = cb.and(where, cb.equal(root.get("broncoId"), broncoId.toString()));
+			predicates.add(cb.equal(root.get("broncoId"), broncoId.toString()));
 		}
 		
-		if (where != null)
-			query = query.where(where);
+		if (predicates.size() > 0)
+			query.where(cb.and(predicates.toArray(new Predicate[0])));
+		
+		// TODO sql injection
 		
 		List<Student> students = session.createQuery(query).getResultList();
 		
