@@ -148,47 +148,51 @@ public class Loan implements CRUDOperations
 	public String toString()
 	{
 		return student.toString() + "\n-- Item details --\n" + item.toString() + "Course: " + course +
-			   "\nLoan date: " + loanDate + "Due date: " + dueDate;
+			   "\nLoan date: " + loanDate + "\nDue date: " + dueDate + "\nReturn date: " + returnDate;
 	}
 	
 	public double calculateEstimatedPrice()
 	{
-		double price = 0.0;
-		/* TODO
-		 * price = item.dailyPrice * number of days between dueDate and loanDate
-		 */
+		double price = item.getDailyPrice() * calculateDaysBetweenDates(loanDate, dueDate);
 		return price;
 	}
 	
 	public double calculateFines()
 	{
 		double fines = 0.0;
-		/* TODO
-		 * fines = item.dailyPrice * number of days between dueDate and returnDate
-		 * fines += fines * 0.1
-		 */
+		fines = item.getDailyPrice() * calculateDaysBetweenDates(dueDate, returnDate);
+		fines += fines * 0.1;
 		return fines;
 	}
 	
 	public double calculatePrice()
 	{
 		double price = 0.0;
-		/* TODO
-		 * if returnDate is past dueDate
-		 * 		price = calculateEstimatedPrice() + calculateFines()
-		 * else
-		 * 		price = item.dailyPrice * number of days between loanDate and returnDate
-		 */
+		if (returnDate.compareTo(dueDate) > 0) {	// returnDate past dueDate
+			price = calculateEstimatedPrice() + calculateFines();
+		} else {
+			price = item.getDailyPrice() * calculateDaysBetweenDates(loanDate, returnDate);
+		}
 		return price;
 	}
 
 	/*
 	 * Dates stored in instance and database using java.sql.Date class
-	 * Converted into java.time.LocalDate class so they can be operated on
+	 * Converted into java.time.LocalDate class so DAYS.between() can be used
 	 */
 	public long calculateDaysBetweenDates(Date start, Date end){
+		//long days = 0;
+		//try {
+			//LocalDate startDate = start.toLocalDate();
+			//LocalDate endDate = end.toLocalDate();
+			//days = ChronoUnit.DAYS.between(startDate,endDate);
+		//} catch (Exception e) {
+			//System.out.println("Error occurred while doing math with dates.\n" + 
+							   //"Date 1: " + start + "\n" +
+							   //"Date 2: " + end);
+		//}
 		long days = ChronoUnit.DAYS.between(start.toInstant(),end.toInstant());
-
+    
 		return days;
 	}
 	

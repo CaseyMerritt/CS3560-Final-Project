@@ -1,7 +1,9 @@
 package model;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
+//import java.util.Date;
+//import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -23,6 +25,7 @@ import org.hibernate.SessionFactory;
 
 @Entity
 @Table(name = "books", schema = "library")
+
 public class Book extends Item
 {
 	@Column(name = "pages")

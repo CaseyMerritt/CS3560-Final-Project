@@ -1,6 +1,8 @@
 package model;
+
 import java.util.ArrayList;
-import java.util.Date;
+//import java.util.Date;
+//import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -21,6 +23,7 @@ import org.hibernate.SessionFactory;
 
 @Entity
 @Table(name = "films", schema = "library")
+
 public class Film extends Item
 {
 	@Column(name = "length")
