@@ -1,24 +1,17 @@
 package ui.tab;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 
 import ui.RevenueWindow;
+import ui.table.LoanTableModel;
 
-public class LoansTabPanel extends JPanel {
+public class LoansTabPanel extends TabPanel {
     private JTextField numberField;
     private JTextField titleField;
     private JTextField broncoIdField;
@@ -27,124 +20,52 @@ public class LoansTabPanel extends JPanel {
     private JTextField loanedBeforeField;
     private JTextField dueAfterField;
     private JTextField dueBeforeField;
-    private JTextField CourseField;
+    private JTextField courseField;
     private JCheckBox showOverDue;
 
-    private JTable table;
-    
-    private int numberSearch = 0;
-
     public LoansTabPanel() {
-        setLayout(new BorderLayout());
+    	super(2, 5, new LoanTableModel());
 
         // Create input fields.
-        numberField = new JTextField(20);
-        titleField = new JTextField(20);
-        broncoIdField = new JTextField(20);
-        nameField = new JTextField(20);
-        loanedAfterField = new JTextField(20);
-        loanedBeforeField = new JTextField(20);
-        dueAfterField  = new JTextField(20);
-        dueBeforeField  = new JTextField(20);
-        CourseField  = new JTextField(20);
-        showOverDue = new JCheckBox("Only Show Overdue");
+        initializeFields();
 
-        // Create a panel to hold the fields.
-        JPanel fieldsPanel = new JPanel();
-        fieldsPanel.setLayout(new GridLayout(2, 5, 20, 0));
-
-        JPanel numberPanel = new JPanel(new BorderLayout());
-        numberPanel.add(new JLabel("Number"), BorderLayout.NORTH);
-        numberPanel.add(numberField, BorderLayout.CENTER);
-
-        JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.add(new JLabel("Item Title"), BorderLayout.NORTH);
-        titlePanel.add(titleField, BorderLayout.CENTER);
-
-        JPanel broncoIdPanel = new JPanel(new BorderLayout());
-        broncoIdPanel.add(new JLabel("Student Bronco ID"), BorderLayout.NORTH);
-        broncoIdPanel.add(broncoIdField, BorderLayout.CENTER);
-
-        JPanel namePanel = new JPanel(new BorderLayout());
-        namePanel.add(new JLabel("Student Name"), BorderLayout.NORTH);
-        namePanel.add(nameField, BorderLayout.CENTER);
-
-        JPanel dueAfterPanel = new JPanel(new BorderLayout());
-        dueAfterPanel.add(new JLabel("Due After"), BorderLayout.NORTH);
-        dueAfterPanel.add(dueAfterField, BorderLayout.CENTER);
-
-        JPanel dueBeforePanel = new JPanel(new BorderLayout());
-        dueBeforePanel.add(new JLabel("Due Before"), BorderLayout.NORTH);
-        dueBeforePanel.add(dueBeforeField, BorderLayout.CENTER);
-
-        JPanel loanedAfterPanel = new JPanel(new BorderLayout());
-        loanedAfterPanel.add(new JLabel("Loaned After"), BorderLayout.NORTH);
-        loanedAfterPanel.add(loanedAfterField, BorderLayout.CENTER);
-
-        JPanel loanedBeforePanel = new JPanel(new BorderLayout());
-        loanedBeforePanel.add(new JLabel("Loaned Before"), BorderLayout.NORTH);
-        loanedBeforePanel.add(loanedBeforeField, BorderLayout.CENTER);
-
-        JPanel coursePanel = new JPanel(new BorderLayout());
-        coursePanel.add(new JLabel("Course"), BorderLayout.NORTH);
-        coursePanel.add(CourseField, BorderLayout.CENTER);
-
-        fieldsPanel.add(numberPanel);
-        fieldsPanel.add(broncoIdPanel);
-        fieldsPanel.add(loanedAfterPanel);
-        fieldsPanel.add(dueAfterPanel);
-        fieldsPanel.add(coursePanel);
-        fieldsPanel.add(titlePanel);
-        fieldsPanel.add(namePanel);
-        fieldsPanel.add(loanedBeforePanel);
-        fieldsPanel.add(dueBeforePanel);
-        fieldsPanel.add(showOverDue);
+        addFields();
 
         // Add search button.
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
             // Handle search.
         	
-        	DefaultTableModel model = (DefaultTableModel) table.getModel();
-            model.setRowCount(0);
-            
-            Object[][] data = {
-            		{"1", "Book 3", "67890", "Mary", "CS 3560", "03/11/2023", "04/10/2023", ""},
-            		{"2", "Book 1", "12345", "John", "CS 3560", "05/11/2023", "06/10/2023", ""}
-            		
-            };
-            
-            switch (numberSearch) {
-            case 0: // searching for loan #2
-            	model.addRow(data[1]);
-            	break;
-            case 1: // search for overdue
-            	model.addRow(data[0]);
-            	break;
-            default: // search all
-            	for (Object[] o : data) {
-            		model.addRow(o);
-            	}
-            }
-            
-            numberSearch++;
+//        	DefaultTableModel model = (DefaultTableModel) table.getModel();
+//            model.setRowCount(0);
+//            
+//            Object[][] data = {
+//            		{"1", "Book 3", "67890", "Mary", "CS 3560", "03/11/2023", "04/10/2023", ""},
+//            		{"2", "Book 1", "12345", "John", "CS 3560", "05/11/2023", "06/10/2023", ""}
+//            		
+//            };
+//            
+//            switch (numberSearch) {
+//            case 0: // searching for loan #2
+//            	model.addRow(data[1]);
+//            	break;
+//            case 1: // search for overdue
+//            	model.addRow(data[0]);
+//            	break;
+//            default: // search all
+//            	for (Object[] o : data) {
+//            		model.addRow(o);
+//            	}
+//            }
+//            
+//            numberSearch++;
         });
 
         // Add reset button button.
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(e -> {
             // Handle Reset.
-
-            numberField.setText("");
-            titleField.setText("");
-            broncoIdField.setText("");
-            nameField.setText("");
-            loanedAfterField.setText("");
-            loanedBeforeField.setText("");
-            dueAfterField.setText("");
-            dueBeforeField.setText("");
-            CourseField.setText("");
-            showOverDue.setSelected(false);
+            handleReset();
         });
 
         // Add add button.
@@ -179,27 +100,55 @@ public class LoansTabPanel extends JPanel {
         	new RevenueWindow();
         });        
 
-        // Add buttons to the panel.
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.add(searchButton);
-        buttonPanel.add(resetButton);
-        buttonPanel.add(addButton);
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(revenueButton);
+        addButton(searchButton);
+        addButton(resetButton);
+        addButton(addButton);
+        addButton(deleteButton);
+        addButton(revenueButton);
+        System.out.println("finished");
 
         // Create table with 8 columns.
-        String[] columnNames = {
-            "Number", "Item Title", "Student Bronco ID", "Student Name", "Course", "Loan Date", "Due Date", ""
-        };
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        table = new JTable(model);
-
-        // Create a JScrollPane and add the table to it.
-        JScrollPane scrollPane = new JScrollPane(table);          
-
-        // Add the fields and buttons to the main panel.
-        add(fieldsPanel, BorderLayout.NORTH);
-        add(buttonPanel, BorderLayout.CENTER);
-        add(scrollPane, BorderLayout.SOUTH);
+//        String[] columnNames = {
+//            "Number", "Item Title", "Student Bronco ID", "Student Name", "Course", "Loan Date", "Due Date", ""
+//        };
     }
+
+	private void handleReset() {
+		numberField.setText("");
+		titleField.setText("");
+		broncoIdField.setText("");
+		nameField.setText("");
+		loanedAfterField.setText("");
+		loanedBeforeField.setText("");
+		dueAfterField.setText("");
+		dueBeforeField.setText("");
+		courseField.setText("");
+		showOverDue.setSelected(false);
+	}
+
+	private void addFields() {
+		addField(numberField, "Number");
+        addField(broncoIdField, "Student Bronco ID");
+        addField(loanedAfterField, "Loaned After");
+        addField(dueAfterField, "Due After");
+        addField(courseField, "Course");
+        addField(titleField, "Item Title");
+        addField(nameField, "Student Name");
+        addField(loanedBeforeField, "Loaned Before");
+        addField(dueBeforeField, "Due Before");
+        addField(showOverDue);
+	}
+
+	private void initializeFields() {
+		numberField = new JTextField(20);
+        titleField = new JTextField(20);
+        broncoIdField = new JTextField(20);
+        nameField = new JTextField(20);
+        loanedAfterField = new JTextField(20);
+        loanedBeforeField = new JTextField(20);
+        dueAfterField  = new JTextField(20);
+        dueBeforeField  = new JTextField(20);
+        courseField  = new JTextField(20);
+        showOverDue = new JCheckBox("Only Show Overdue");
+	}
 }

@@ -36,6 +36,8 @@ public class Film extends Item
 	@JoinColumn(name = "director_id")
 	private Director director;
 	
+	public Film() {}
+	
 	public Film(String title, String description, String location, double dailyPrice)
 	{
 		super(title, description, location, dailyPrice);

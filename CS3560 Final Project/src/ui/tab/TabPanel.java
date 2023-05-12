@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -27,18 +28,23 @@ public abstract class TabPanel extends JPanel {
 		
 		setLayout(new BorderLayout());
 		
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+		
 		fieldsPanel = new JPanel(new GridLayout(fieldRows, fieldColumns, 20, 0));
-		add(fieldsPanel, BorderLayout.NORTH);
+		topPanel.add(fieldsPanel);
 		
 		buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		add(buttonPanel, BorderLayout.CENTER);
+		topPanel.add(buttonPanel);
+		
+		add(topPanel, BorderLayout.NORTH);
 		
         table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane scrollPane = new JScrollPane(table);  
         
-        add(scrollPane, BorderLayout.SOUTH);
+        add(scrollPane, BorderLayout.CENTER);
 	}
 	
 	protected final void addField(JComponent field, String label) {
