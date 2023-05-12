@@ -1,6 +1,7 @@
-package ui;
+package driver;
 
 import model.*;
+import ui.StudentWindow;
 
 public class ReceiptDriver {
 
