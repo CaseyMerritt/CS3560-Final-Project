@@ -31,7 +31,7 @@ public class Film extends Item
 	private int length; // length is measured in minutes
 	@Column(name = "release_date")
 	private Date releaseDate;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "director_id")
 	private Director director;
 	

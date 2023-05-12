@@ -35,7 +35,7 @@ public class Book extends Item
 	private String publisher;
 	@Column(name = "publication_date")
 	private Date publicationDate;
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "books_authors",
 			schema = "library",
 			joinColumns = @JoinColumn(name = "book_code"),

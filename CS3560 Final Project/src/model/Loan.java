@@ -44,10 +44,10 @@ public class Loan implements CRUDOperations
 	private String course;
 	@Column(name = "paid_amount")
 	private double paidAmount;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "student_id")
 	private Student student;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "item_code")
 	private Item item;
 	

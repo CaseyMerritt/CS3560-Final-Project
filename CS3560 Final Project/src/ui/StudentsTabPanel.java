@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -14,15 +15,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+
+import model.Student;
+import ui.table.StudentTableModel;
 
 public class StudentsTabPanel extends JPanel {
     private JTextField broncoIdField;
     private JTextField nameField;
 
     private JTable table;
-    
-    private int numTimesSearch = 0;
+    private StudentTableModel model;
 
     public StudentsTabPanel() {
         setLayout(new BorderLayout());
@@ -50,27 +52,20 @@ public class StudentsTabPanel extends JPanel {
         // Add search button.
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            model.setRowCount(0);
+        	String name = nameField.getText().trim();
+        	String broncoIdText = broncoIdField.getText().trim();
+        	int broncoId = 0;
+        	// TODO handle exceptions
+        	try {
+        		broncoId = Integer.parseInt(broncoIdText);
+        	} catch (NumberFormatException ex) {
+        		
+        	}
+        	
+        	
+            List<Student> students = Student.findBy(name.isBlank() ? null : name, broncoIdText.isBlank() ? null : broncoId);
             
-            Object[] data = {"12345", "John", "0", "0", "$0.00"};
-            // mary has loaned item with daily price of $1.00 and length of 30 days, 30 days overdue
-            Object[] data2 = {"67890", "Mary", "1", "1", "$63.00"};
-            switch (numTimesSearch) {
-            case 0: // after adding John
-            	model.addRow(data);
-            	break;
-            case 1: // then reset and search
-            	model.addRow(data);
-            	model.addRow(data2);
-            	break;
-            default: // after loaning item to John
-            	data[2] = "1";
-            	model.addRow(data);
-            	model.addRow(data2);
-            }
-            
-            numTimesSearch++;
+            model.setRows(students);
         });
 
         // Add reset button button.
@@ -83,66 +78,59 @@ public class StudentsTabPanel extends JPanel {
 
         // Add Add button.
         JButton addButton = new JButton("Add New");
-        addButton.addActionListener(new ActionListener() {
-            // Handle Add.
-            public void actionPerformed(ActionEvent e) {
-                // Get values from input fields
-//                String name = nameField.getText();
-//                String broncoId = broncoIdField.getText();
-//
-//                // Validate if the required fields are filled
-//                if (name.isEmpty() || broncoId.isEmpty()) {
-//                    JOptionPane.showMessageDialog(null, "Please fill in all the fields.", "Error", JOptionPane.ERROR_MESSAGE);
-//                    return;
-//                }
-//
-//                // Create a new row object with the input values
-//                Object[] rowData = {broncoId, name, "", "", "", ""}; // Modify the last two empty columns as per your requirements
-//
-//                // Add the new row to the table model
-//                DefaultTableModel model = (DefaultTableModel) table.getModel();
-//                model.addRow(rowData);
-//
-//                // Clear the input fields
-//                nameField.setText("");
-//                broncoIdField.setText("");
-
-                // Display a success message
-                JOptionPane.showMessageDialog(null, "Student added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-            }
+        addButton.addActionListener(e -> {
+        	String broncoId = broncoIdField.getText().trim();
+        	String name = nameField.getText().trim();
+        	
+        	if (name.isBlank()) {
+        		JOptionPane.showMessageDialog(this, "Name cannot be blank!", "Error", JOptionPane.ERROR_MESSAGE);
+    			return;
+        	}
+        	
+        	if (broncoId.isBlank()) {
+        		JOptionPane.showMessageDialog(this, "Bronco ID cannot be blank!", "Error", JOptionPane.ERROR_MESSAGE);
+    			return;
+        	}
+        	
+        	int broncoIdInt = 0;
+        	
+        	try {
+    			broncoIdInt = Integer.parseInt(broncoId);
+    		} catch (NumberFormatException ex) {
+    			JOptionPane.showMessageDialog(this, "Invalid Bronco ID!", "Error", JOptionPane.ERROR_MESSAGE);
+    			return;
+    		}
+        	
+        	Student student = new Student(name, broncoIdInt);
+        	
+        	// TODO handle exceptions
+        	student.create();
+        	
+        	JOptionPane.showMessageDialog(this, "Student added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
         });
 
         
         // Add delete button.
         JButton deleteButton = new JButton("Delete");
-        deleteButton.addActionListener(new ActionListener() {
-            // Handle delete.
-            public void actionPerformed(ActionEvent e) {
-                int selectedRowIndex = table.getSelectedRow();
+        deleteButton.addActionListener(e -> {
+            int selectedRowIndex = table.getSelectedRow();
+            
+            if (selectedRowIndex < 0) return;
+            
+            Student student = model.getRow(selectedRowIndex);
 
-                if(selectedRowIndex >= 0) {
-                    // Get broncoId from row you want to delete
-                    String broncoId = table.getValueAt(selectedRowIndex, 0).toString();
-
-                    // confirm deletion
-                    int option = JOptionPane.showConfirmDialog(null, 
-                    "Are you sure you want to delete the student with this BroncoId", 
-                    "Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
-                    
-                    DefaultTableModel model= (DefaultTableModel) table.getModel();
-                    
-                    if(option == JOptionPane.YES_OPTION){
-                        model.removeRow(selectedRowIndex);
-
-                        // Display confirmation of deletion
-                        JOptionPane.showMessageDialog(null, "Student deleted");
-                    } 
-                    else {
-                        JOptionPane.showMessageDialog(null, "Please select a student to delete.",
-                         "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
+            // confirm deletion
+            int option = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to delete the student with Bronco ID: " + student.getBroncoId(), 
+            "Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
+            
+            if(option == JOptionPane.YES_OPTION){
+            	// TODO handle exceptions
+                student.delete();
+            	
+                // Display confirmation of deletion
+                JOptionPane.showMessageDialog(null, "Student deleted");
+            } 
         });           
 
         // Add buttons to the panel.
@@ -152,11 +140,8 @@ public class StudentsTabPanel extends JPanel {
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
 
-        // Create table with 7 columns.
-        String[] columnNames = {
-            "Bronco ID", "Name", "Items Loaned", "Items Overdue", "Balance", ""
-        };
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        // Create table
+        model = new StudentTableModel();
         table = new JTable(model);
 
         // Create a JScrollPane and add the table to it.
@@ -167,4 +152,5 @@ public class StudentsTabPanel extends JPanel {
         add(buttonPanel, BorderLayout.CENTER);
         add(scrollPane, BorderLayout.SOUTH);
     }
+    
 }
