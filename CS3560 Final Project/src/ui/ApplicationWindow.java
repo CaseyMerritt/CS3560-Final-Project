@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.table.DefaultTableModel;
 
+import database.HibernateSessionFactory;
 import ui.tab.AuthorsTabPanel;
 import ui.tab.DirectorsTabPanel;
 import ui.tab.ItemTabPanel;
@@ -15,7 +16,7 @@ public class ApplicationWindow extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1200, 650));
         setTitle("Library Management");
-        setVisible(true);
+        
 
         // Create the tabbed pane.
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -28,6 +29,11 @@ public class ApplicationWindow extends JFrame{
         tabbedPane.addTab("Directors", new DirectorsTabPanel());
 
         add(tabbedPane);
+        
         pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+        
+        HibernateSessionFactory.getSessionFactory();
     }
 }

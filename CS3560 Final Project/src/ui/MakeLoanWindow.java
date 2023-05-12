@@ -112,8 +112,9 @@ public class MakeLoanWindow extends JFrame {
         add(fieldPanel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.SOUTH);
         
-        setVisible(true);
-        pack();
         
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
 	}
 }

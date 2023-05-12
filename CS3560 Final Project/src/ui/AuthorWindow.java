@@ -84,7 +84,6 @@ public class AuthorWindow extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(250, 300));
         setTitle("Author");
-        setVisible(true);
 		
 		nameField = new JTextField(20);
 		nationalityField = new JTextField(20);
@@ -115,6 +114,8 @@ public class AuthorWindow extends JFrame{
 		add(panel);
 		
 		pack();
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 
 

@@ -25,7 +25,6 @@ public class RevenueWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(500, 300));
         setTitle("Revenue Report");
-        setVisible(true);
 		
         year = new JComboBox();
         year.addItem("2023");
@@ -75,6 +74,9 @@ public class RevenueWindow extends JFrame {
         add(fieldPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         
+        
         pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
 	}
 }

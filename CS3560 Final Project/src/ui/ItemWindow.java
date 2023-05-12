@@ -27,7 +27,7 @@ public class ItemWindow extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1000, 500));
         setTitle("Item");   //TODO change title based on whether book or film
-        setVisible(true);
+        
 
         codeField = new JTextField(20);
         titleField = new JTextField(20);
@@ -111,8 +111,11 @@ public class ItemWindow extends JFrame{
         //panel.add(button);
         //panel.add(loanPanel);
 
+        
         add(panel);
         pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
 }

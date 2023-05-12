@@ -21,7 +21,6 @@ public class ReceiptWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(250, 300));
         setTitle("Loan #" + loan.getNumber() + " Receipt");
-        setVisible(true);
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 		NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
@@ -96,7 +95,10 @@ public class ReceiptWindow extends JFrame {
 		
 		add(panel);
 		
+		
 		pack();
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 	
 }

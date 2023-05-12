@@ -80,10 +80,10 @@ public class StudentWindow extends JFrame {
 	}
 	
 	private void setupWindow() {
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(250, 300));
         setTitle("Student");
-        setVisible(true);
 		
 		broncoIdField = new JTextField(20);
 		nameField = new JTextField(20);
@@ -108,6 +108,8 @@ public class StudentWindow extends JFrame {
 		add(panel);
 		
 		pack();
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 	
 }
