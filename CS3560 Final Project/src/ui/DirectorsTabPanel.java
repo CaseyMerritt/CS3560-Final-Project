@@ -1,110 +1,133 @@
 package ui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 
-public class DirectorsTabPanel extends JPanel {
+import model.Director;
+import ui.tab.TabPanel;
+import ui.table.DirectorTableModel;
+
+public class DirectorsTabPanel extends TabPanel {
     private JTextField nameField;
     private JTextField nationalityField;
     private JTextField styleField;
 
-    private JTable table;
-
     public DirectorsTabPanel() {
-        setLayout(new BorderLayout());
+    	super(1, 3, new DirectorTableModel());
 
         // Create input fields.
         nameField = new JTextField(20);
         nationalityField = new JTextField(20);
         styleField = new JTextField(20);
 
-        // Create a panel to hold the fields.
-        JPanel fieldsPanel = new JPanel();
-        fieldsPanel.setLayout(new GridLayout(1, 3, 20, 0));
-
-        JPanel namePanel = new JPanel(new BorderLayout());
-        namePanel.add(new JLabel("Name"), BorderLayout.NORTH);
-        namePanel.add(nameField, BorderLayout.CENTER);
-
-        JPanel nationalityPanel = new JPanel(new BorderLayout());
-        nationalityPanel.add(new JLabel("Nationality"), BorderLayout.NORTH);
-        nationalityPanel.add(nationalityField, BorderLayout.CENTER);
-
-        JPanel stylePanel = new JPanel(new BorderLayout());
-        stylePanel.add(new JLabel("Style"), BorderLayout.NORTH);
-        stylePanel.add(styleField, BorderLayout.CENTER);
-
-        
-        fieldsPanel.add(namePanel);//min pages length
-        fieldsPanel.add(nationalityPanel);//published released before
-        fieldsPanel.add(stylePanel);//Author/Director
+        addField(nameField, "Name");
+        addField(nationalityField, "Nationality");
+        addField(styleField, "Style");
 
         // Add search button.
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
-            // Handle search.
+        	handleSearch();
         });
 
         // Add reset button button.
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(e -> {
-            // Handle Reset.
-
-            nameField.setText("");
-            nationalityField.setText("");
-            styleField.setText("");
+            handleReset();
         });
 
         // Add Add button.
         JButton addButton = new JButton("Add New");
         addButton.addActionListener(e -> {
-            // Handle Add.
+        	handleAddNew();
+        });
+        
+        // Add edit button.
+        JButton editButton = new JButton("Edit");
+        editButton.addActionListener(e -> {
+        	// TODO implement editing author
         });
 
         // Add delete button.
         JButton deleteButton = new JButton("Delete");
-        deleteButton.addActionListener(new ActionListener() {
-            // Handle delete.
-            public void actionPerformed(ActionEvent e) {
-                // Get name from user
-                String name = JOptionPane.showInputDialog("Enter Director Name To Delete");
-                // delete Director in database
-                // database.deleteAuthor(name);
-            }
+        deleteButton.addActionListener(e -> {
+            handleDelete(); 
         });           
 
-        // Add buttons to the panel.
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.add(searchButton);
-        buttonPanel.add(resetButton);
-        buttonPanel.add(addButton);
-        buttonPanel.add(deleteButton);
-
-        // Create table with 5 columns.
-        String[] columnNames = {
-            "Name", "Nationality", "Style", "Films", ""
-        };
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        table = new JTable(model);
-
-        // Create a JScrollPane and add the table to it.
-        JScrollPane scrollPane = new JScrollPane(table);             
-
-        // Add the fields and buttons to the main panel.
-        add(fieldsPanel, BorderLayout.NORTH);
-        add(buttonPanel, BorderLayout.CENTER);
-        add(scrollPane, BorderLayout.SOUTH);
+        addButton(searchButton);
+        addButton(resetButton);
+        addButton(addButton);
+        addButton(editButton);
+        addButton(deleteButton);
     }
+
+	private void handleDelete() {
+		int selectedRowIndex = getSelectedRow();
+		
+		if (selectedRowIndex < 0) return;
+		
+		Director director = (Director) model.getRow(selectedRowIndex);
+
+		// confirm deletion
+		int option = JOptionPane.showConfirmDialog(this, 
+		        "Are you sure you want to delete the director " + director.getName(), 
+		        "Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
+		
+		if(option == JOptionPane.YES_OPTION){
+			// TODO handle exceptions
+		    director.delete();
+		    model.removeRow(selectedRowIndex);
+			
+		    // Display confirmation of deletion
+		    JOptionPane.showMessageDialog(null, "Director deleted");
+		}
+	}
+
+	private void handleAddNew() {
+		String name = nameField.getText().trim();
+		String nationality = nationalityField.getText().trim();
+		String style = styleField.getText().trim();
+		
+		if (name.isBlank()) {
+			JOptionPane.showMessageDialog(this, "Name cannot be blank!", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if (nationality.isBlank()) {
+			nationality = null;
+		}
+		
+		if (style.isBlank()) {
+			style = null;
+		}
+		
+		Director director = new Director(name, nationality, style);
+		
+		// TODO handle exceptions
+		director.create();
+		
+		JOptionPane.showMessageDialog(this, "Director added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private void handleReset() {
+		// Handle Reset.
+		nameField.setText("");
+		nationalityField.setText("");
+		styleField.setText("");
+	}
+
+	private void handleSearch() {
+		String name = nameField.getText().trim();
+		String nationality = nationalityField.getText().trim();
+		String style = styleField.getText().trim();
+		
+		List<Director> directors = Director.findBy(name.isBlank() ? null : name, 
+				nationality.isBlank() ? null : nationality,
+			    style.isBlank() ? null : style);
+		
+		model.setRows(directors);
+	}
 }
