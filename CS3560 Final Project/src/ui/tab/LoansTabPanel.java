@@ -34,31 +34,7 @@ public class LoansTabPanel extends TabPanel {
         // Add search button.
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
-            // Handle search.
-        	
-//        	DefaultTableModel model = (DefaultTableModel) table.getModel();
-//            model.setRowCount(0);
-//            
-//            Object[][] data = {
-//            		{"1", "Book 3", "67890", "Mary", "CS 3560", "03/11/2023", "04/10/2023", ""},
-//            		{"2", "Book 1", "12345", "John", "CS 3560", "05/11/2023", "06/10/2023", ""}
-//            		
-//            };
-//            
-//            switch (numberSearch) {
-//            case 0: // searching for loan #2
-//            	model.addRow(data[1]);
-//            	break;
-//            case 1: // search for overdue
-//            	model.addRow(data[0]);
-//            	break;
-//            default: // search all
-//            	for (Object[] o : data) {
-//            		model.addRow(o);
-//            	}
-//            }
-//            
-//            numberSearch++;
+            // TODO implement search
         });
 
         // Add reset button button.
@@ -105,12 +81,6 @@ public class LoansTabPanel extends TabPanel {
         addButton(addButton);
         addButton(deleteButton);
         addButton(revenueButton);
-        System.out.println("finished");
-
-        // Create table with 8 columns.
-//        String[] columnNames = {
-//            "Number", "Item Title", "Student Bronco ID", "Student Name", "Course", "Loan Date", "Due Date", ""
-//        };
     }
 
 	private void handleReset() {
