@@ -31,6 +31,8 @@ public class ItemWindow extends JFrame{
         setupWindow(item);
         // TODO get data from existing book or film object
         // TODO create new book or film
+        // TODO edit/save button functionality
+        // TODO loan button functionality
     }
 
     public void setupWindow(Item item){
