@@ -1,13 +1,11 @@
 package ui.table;
 
-import java.text.NumberFormat;
+import model.Author;
 
-import model.Student;
+public class AuthorTableModel extends EntityTableModel<Author> {
 
-public class StudentTableModel extends EntityTableModel<Student> {
-
-	private static final String[] COLUMNS = {"Bronco ID", "Name", "Items Loaned", "Items Overdue", "Balance"};
-
+	private static final String[] COLUMNS = {"ID", "Name", "Nationality", "Subject"};
+	
 	@Override
 	public int getColumnCount() {
 		return COLUMNS.length;
@@ -18,19 +16,17 @@ public class StudentTableModel extends EntityTableModel<Student> {
 		if (rowIndex < 0 || rowIndex >= items.size())
 			throw new IndexOutOfBoundsException("Row index out of bounds: " + rowIndex);
 		
-		Student student = items.get(rowIndex);
+		Author author = items.get(rowIndex);
 		
 		switch (columnIndex) {
 		case 0:
-			return student.getBroncoId() + "";
+			return author.getID();
 		case 1:
-			return student.getName() + "";
+			return author.getName();
 		case 2:
-			return student.getNumberLoans();
+			return author.getNationality();
 		case 3:
-			return student.getNumberLoansOverdue();
-		case 4:
-			return NumberFormat.getCurrencyInstance().format(student.calculateBalance());
+			return author.getSubject();
 		default:
 			throw new IndexOutOfBoundsException("Column index out of bounds: " + columnIndex);
 		}
