@@ -1,4 +1,4 @@
-package ui;
+package ui.tab;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -15,6 +15,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import ui.RevenueWindow;
 
 public class LoansTabPanel extends JPanel {
     private JTextField numberField;

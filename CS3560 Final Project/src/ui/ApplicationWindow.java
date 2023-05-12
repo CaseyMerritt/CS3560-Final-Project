@@ -4,6 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.table.DefaultTableModel;
 
+import ui.tab.AuthorsTabPanel;
+import ui.tab.DirectorsTabPanel;
+import ui.tab.ItemTabPanel;
+import ui.tab.LoansTabPanel;
+import ui.tab.StudentsTabPanel;
+
 public class ApplicationWindow extends JFrame{
     public ApplicationWindow(){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -1,4 +1,4 @@
-package ui;
+package ui.tab;
 
 import java.util.List;
 
@@ -7,7 +7,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import model.Author;
-import ui.tab.TabPanel;
 import ui.table.AuthorTableModel;
 
 public class AuthorsTabPanel extends TabPanel {

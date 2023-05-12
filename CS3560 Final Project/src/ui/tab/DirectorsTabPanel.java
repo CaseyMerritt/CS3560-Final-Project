@@ -1,4 +1,4 @@
-package ui;
+package ui.tab;
 
 import java.util.List;
 
@@ -7,7 +7,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import model.Director;
-import ui.tab.TabPanel;
 import ui.table.DirectorTableModel;
 
 public class DirectorsTabPanel extends TabPanel {
