@@ -51,6 +51,8 @@ public class Loan implements CRUDOperations
 	@JoinColumn(name = "item_code")
 	private Item item;
 	
+	public Loan() {}
+	
 	// constructor
 	public Loan(Student student, Item item, String course, int numberDays)
 	{

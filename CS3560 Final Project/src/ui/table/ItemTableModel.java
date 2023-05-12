@@ -4,6 +4,7 @@ import model.Book;
 import model.Item;
 import model.Film;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
 public class ItemTableModel extends EntityTableModel<Item> {
@@ -30,7 +31,7 @@ public class ItemTableModel extends EntityTableModel<Item> {
 		case 3:
 			return item.getLocation();
 		case 4:
-			return item.getDailyPrice();
+			return NumberFormat.getCurrencyInstance().format(item.getDailyPrice());
 		case 8:
 			return item.isAvailable() ? "Available" : "Not Available";
 		default:

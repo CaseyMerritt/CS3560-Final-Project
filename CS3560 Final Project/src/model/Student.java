@@ -60,7 +60,7 @@ public class Student extends Person
 	@Override
 	public String toString()
 	{
-		return "Student: " + super.getName() + "\n\tBronco ID: " + broncoId + "\n";
+		return broncoId + " - " + super.getName();
 	}
 	
 	public int getNumberLoansOverdue() {

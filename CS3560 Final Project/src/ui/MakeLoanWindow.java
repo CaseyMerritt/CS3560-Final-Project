@@ -6,40 +6,48 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 
 import model.*;
 
-public class LoanWindow extends JFrame {
+public class MakeLoanWindow extends JFrame {
 	private JTextField course;
 	private JTextField itemTitle;
 	private JComboBox student;
 	private JTextField numberDays;
+	private Item item;
 	
-	public LoanWindow() {
+	public MakeLoanWindow(Item item) {
+		this.item = item;
 		setupWindow();
 	}
 
 	private void setupWindow() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(500, 250));
-        setTitle("Loan Book");
-        setVisible(true);
+        setTitle("Loan Item");
         
         itemTitle = new JTextField(20);
         student = new JComboBox<String>();
         course = new JTextField(20);
         numberDays = new JTextField(20);
         
-        itemTitle.setText("Book 1");
+        itemTitle.setEditable(false);
         
-        student.addItem("John");
-        student.addItem("Mary");
+        itemTitle.setText(item.getTitle());
+        
+        List<Student> students = Student.findBy(null, null);
+        
+        for (Student s : students) {
+        	student.addItem(s);
+        }
         
         JPanel fieldPanel = new JPanel(new GridLayout(4, 1, 20, 0));
         
@@ -70,10 +78,30 @@ public class LoanWindow extends JFrame {
         JButton save = new JButton("Save");
         
         save.addActionListener(e -> {
-        	Student student = new Student("John", 12345);
-        	Book book = new Book("Book 1", "", "", 1);
-        	Loan loan = new Loan(student, book, "CS 3560", 30);
-        	loan.setNumber(2);
+        	int numDays;
+        	
+        	try {
+				numDays = Integer.parseInt(numberDays.getText().trim());
+				
+				if (numDays < 0) {
+					JOptionPane.showMessageDialog(this, "Invalid number of days!", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			} catch (NumberFormatException e1) {
+				JOptionPane.showMessageDialog(this, "Invalid number of days!", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+        	
+        	Student s = (Student) student.getSelectedItem();
+        	
+        	if (s.getNumberLoansOverdue() > 0) {
+        		JOptionPane.showMessageDialog(this, "Student has too many overdue loans!", "Error", JOptionPane.ERROR_MESSAGE);
+        		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+				return;
+        	}
+        	
+        	Loan loan = item.makeLoanTo(s, numDays, course.getText().trim());
+
         	new ReceiptWindow(loan);
         	this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         });
@@ -84,6 +112,7 @@ public class LoanWindow extends JFrame {
         add(fieldPanel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.SOUTH);
         
+        setVisible(true);
         pack();
         
 	}

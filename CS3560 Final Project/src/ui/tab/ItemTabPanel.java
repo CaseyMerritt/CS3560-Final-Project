@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import ui.LoanWindow;
+import ui.MakeLoanWindow;
 import ui.table.ItemTableModel;
 import model.Book;
 import model.BookQuery;
@@ -77,8 +77,14 @@ public class ItemTabPanel extends TabPanel {
         
         JButton loanButton = new JButton("Loan");
         loanButton.addActionListener(e -> {
-        	// TODO implement loans
-        	new LoanWindow();
+        	int selectedRowIndex = getSelectedRow();
+    		
+    		if (selectedRowIndex < 0) return;
+    		
+    		Item item = (Item) model.getRow(selectedRowIndex);;
+    		
+    		if (item.isAvailable())
+    			new MakeLoanWindow(item);
         });
 
         addButton(searchButton);
