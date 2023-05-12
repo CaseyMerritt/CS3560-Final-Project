@@ -1,5 +1,9 @@
-package model;
+package driver;
 import java.util.List;
+
+import model.Author;
+import model.Director;
+import model.Student;
 
 public class PersonDriver {
 	public static void main(String[] args) {

@@ -1,6 +1,15 @@
-package model;
+package database;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+
+import model.Author;
+import model.Book;
+import model.Director;
+import model.Film;
+import model.Item;
+import model.Loan;
+import model.Person;
+import model.Student;
 
 public class HibernateSessionFactory {
 	

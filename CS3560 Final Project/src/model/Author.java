@@ -17,6 +17,8 @@ import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import database.HibernateSessionFactory;
+
 @Entity
 @Table(name = "authors", schema = "library")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)

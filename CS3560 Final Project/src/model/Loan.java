@@ -24,6 +24,8 @@ import javax.persistence.criteria.Predicate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import database.HibernateSessionFactory;
+
 @Entity
 @Table(name = "loans", schema = "library")
 public class Loan implements CRUDOperations

@@ -5,6 +5,8 @@ import javax.persistence.MappedSuperclass;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import database.HibernateSessionFactory;
+
 @MappedSuperclass
 public abstract class Person implements CRUDOperations
 {

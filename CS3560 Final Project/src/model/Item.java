@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import database.HibernateSessionFactory;
+
 @Entity
 @Table(name = "items", schema = "library")
 @Inheritance(strategy = InheritanceType.JOINED)

@@ -1,6 +1,10 @@
-package model;
+package driver;
 import java.util.Date;
 import java.util.List;
+
+import model.Author;
+import model.Book;
+import model.BookQuery;
 
 public class ItemDriver {
 	

@@ -1,8 +1,13 @@
-package model;
+package driver;
 import ui.ApplicationWindow;
 
 // use this class to test attributes and functions during development
 import java.sql.Date;
+
+import model.Book;
+import model.Film;
+import model.Loan;
+import model.Student;
 public class TestDriver
 {
 	public static void main(String args[])
