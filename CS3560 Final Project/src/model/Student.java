@@ -1,10 +1,13 @@
+package model;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -53,7 +56,29 @@ public class Student extends Person
 		return "Student: " + super.getName() + "\n\tBronco ID: " + broncoId + "\n";
 	}
 	
-	// TODO implement hasOverdueItems() : boolean
+	public boolean hasOverdueItems() {
+		LoanQuery loanQuery = new LoanQuery();
+		loanQuery.setBroncoId(broncoId);
+		List<Loan> loans = Loan.findBy(loanQuery);
+		for (Loan loan : loans) {
+			if (loan.isOverdue()) return true;
+		}
+		
+		return false;
+	}
+	
+	public double calculateBalance() {
+		LoanQuery loanQuery = new LoanQuery();
+		loanQuery.setBroncoId(broncoId);
+		List<Loan> loans = Loan.findBy(loanQuery);
+		double totalBalance = 0.0;
+		
+		for (Loan loan : loans) {
+			totalBalance += loan.calculatePrice() - loan.getPaidAmount();
+		}
+		
+		return totalBalance;
+	}
 	
 	public static List<Student> findBy(String name, Integer broncoId) {
 		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();

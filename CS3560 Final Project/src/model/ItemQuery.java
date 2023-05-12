@@ -1,3 +1,4 @@
+package model;
 
 public abstract class ItemQuery {
 	private Integer code;

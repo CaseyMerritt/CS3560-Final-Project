@@ -1,3 +1,4 @@
+package model;
 import java.util.Date;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -25,7 +26,7 @@ import org.hibernate.SessionFactory;
 
 @Entity
 @Table(name = "loans", schema = "library")
-public class Loan
+public class Loan implements CRUDOperations
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -278,4 +279,39 @@ public class Loan
 		
 		return loans;
 	}
+
+	@Override
+	public void create() {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		session.save(this);
+		session.getTransaction().commit();
+	}
+
+	@Override
+	public void update() {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		session.update(this);
+		session.getTransaction().commit();
+	}
+
+	@Override
+	public void delete() {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		session.delete(this);
+		session.getTransaction().commit();
+	}
+
+	public boolean isOverdue() {
+		return dueDate.compareTo(new Date()) < 0;
+	}
+	
 }

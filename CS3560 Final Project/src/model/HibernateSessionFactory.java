@@ -1,3 +1,4 @@
+package model;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -18,6 +19,7 @@ public class HibernateSessionFactory {
 				                 .addAnnotatedClass(Item.class)
 				                 .addAnnotatedClass(Book.class)
 				                 .addAnnotatedClass(Film.class)
+				                 .addAnnotatedClass(Loan.class)
 				                 .buildSessionFactory();
 		}
 		

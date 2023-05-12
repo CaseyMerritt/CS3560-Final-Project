@@ -35,6 +35,8 @@ public class ItemTabPanel extends JPanel {
 
     private JTable table;
     
+    private int numTimesSearch = 0;
+    
     public ItemTabPanel() {
         setLayout(new BorderLayout());
 
@@ -137,7 +139,43 @@ public class ItemTabPanel extends JPanel {
         // Add search button.
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
-            // Handle search.
+        	DefaultTableModel tModel = (DefaultTableModel) table.getModel();
+        	tModel.setRowCount(0);
+            
+            Object[][] bookData = {
+            		{"1", "Book 1", "The description for book 1", "L32", "$1.00",
+                     "150", "01/04/2015", "Book 1's Publisher", "Available", ""},
+            		{"2", "Book 2", "This is the description for the 2nd book", "F98", "$2.00",
+                         "200", "04/07/2010", "Publisher for Book 2", "Available", ""},
+            		{"3", "Book 3", "Book 3's description", "H32", "$1.00",
+                             "150", "01/04/2005", "Book 3's Publisher", "Not Available", ""}
+            };
+            
+            Object[][] filmData = {
+            		{"4", "Documentary Title", "This is a documentary", "H04", "$1.00",
+                     "90", "05/29/2020", "", "Available", ""}
+            };
+            
+            switch (numTimesSearch) {
+            case 0: // search for all books
+            	for (Object[] o : bookData) {
+            		tModel.addRow(o);
+            	}
+            	break;
+            case 1: // search for all films
+            	tModel.addRow(filmData[0]);
+            	break;
+            case 2: // search for Book 1
+            	tModel.addRow(bookData[0]);
+            	break;
+            default: // after loaning Book 1 to John
+            	bookData[0][8] = "Not Available";
+            	for (Object[] o : bookData) {
+            		tModel.addRow(o);
+            	}
+            }
+            
+            numTimesSearch++;
         });
 
         // Add reset button button.
@@ -183,7 +221,12 @@ public class ItemTabPanel extends JPanel {
                     JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Item Code.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        });        
+        });     
+        
+        JButton loanButton = new JButton("Loan");
+        loanButton.addActionListener(e -> {
+        	new LoanWindow();
+        });
 
         // Add buttons to the panel.
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -191,6 +234,7 @@ public class ItemTabPanel extends JPanel {
         buttonPanel.add(resetButton);
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(loanButton);
 
         // Create table with 10 columns.
         String[] columnNames = {
