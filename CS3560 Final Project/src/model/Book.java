@@ -16,6 +16,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -26,11 +27,10 @@ import database.HibernateSessionFactory;
 
 @Entity
 @Table(name = "books", schema = "library")
-
 public class Book extends Item
 {
 	@Column(name = "pages")
-	private int pages;
+	private Integer pages;
 	@Column(name = "publisher")
 	private String publisher;
 	@Column(name = "publication_date")
@@ -82,7 +82,7 @@ public class Book extends Item
 	// getters
 	public int getPages()
 	{
-		return pages;
+		return pages == null ? 0 : pages;
 	}
 
 	public String getPublisher()
@@ -90,7 +90,7 @@ public class Book extends Item
 		return publisher;
 	}
 
-	public java.util.Date getPublicationDate()
+	public Date getPublicationDate()
 	{
 		return publicationDate;
 	}
@@ -126,7 +126,9 @@ public class Book extends Item
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Book> query = cb.createQuery(Book.class);
 		Root<Book> root = query.from(Book.class);
-		Join<Book, Author> joined = root.join("authors");
+		
+		Join<Book, Author> joined = root.join("authors", JoinType.LEFT);
+		
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		

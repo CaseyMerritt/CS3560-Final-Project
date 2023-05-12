@@ -23,7 +23,7 @@ public class Item implements CRUDOperations
 	@Column(name = "code")
 	private int code;
 	@Column(name = "available")
-	private boolean available;
+	private Boolean available;
 	@Column(name = "title")
 	private String title;
 	@Column(name = "description")
@@ -31,7 +31,7 @@ public class Item implements CRUDOperations
 	@Column(name = "location")
 	private String location;
 	@Column(name = "daily_price")
-	private double dailyPrice;
+	private Double dailyPrice;
 	
 	public Item() {
 		
@@ -86,7 +86,7 @@ public class Item implements CRUDOperations
 	
 	public boolean isAvailable()
 	{
-		return available;
+		return available == null ? false : available;
 	}
 	
 	public String getTitle()
@@ -106,7 +106,7 @@ public class Item implements CRUDOperations
 
 	public double getDailyPrice()
 	{
-		return dailyPrice;
+		return dailyPrice == null ? 0 : dailyPrice;
 	}
 	
 	// overriding toString()

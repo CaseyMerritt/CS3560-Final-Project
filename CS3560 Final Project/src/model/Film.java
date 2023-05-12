@@ -14,6 +14,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -28,7 +29,7 @@ import database.HibernateSessionFactory;
 public class Film extends Item
 {
 	@Column(name = "length")
-	private int length; // length is measured in minutes
+	private Integer length; // length is measured in minutes
 	@Column(name = "release_date")
 	private Date releaseDate;
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -59,7 +60,7 @@ public class Film extends Item
 	// getters
 	public int getLength()
 	{
-		return length;
+		return length == null ? 0 : length;
 	}
 
 	public Date getReleaseDate()
@@ -89,7 +90,8 @@ public class Film extends Item
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Film> query = cb.createQuery(Film.class);
 		Root<Film> root = query.from(Film.class);
-		Join<Film, Director> joined = root.join("directors");
+		Join<Film, Director> joined = root.join("director", JoinType.LEFT);
+		
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		

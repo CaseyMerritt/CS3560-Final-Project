@@ -1,6 +1,7 @@
 package ui.tab;
 
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,6 +19,7 @@ import ui.LoanWindow;
 import ui.table.ItemTableModel;
 import model.Book;
 import model.BookQuery;
+import model.Film;
 import model.FilmQuery;
 import model.ItemQuery;
 import model.Student;
@@ -52,106 +54,7 @@ public class ItemTabPanel extends TabPanel {
         // Add search button.
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
-        	ItemQuery itemQuery = bookButton.isSelected() ? new BookQuery() : new FilmQuery();
-        	
-        	String code = codeField.getText().trim();
-        	String location = locationField.getText().trim();
-        	String maxDailyPrice = maxDailyPriceField.getText().trim();
-        	String minDailyPrice = minDailyPriceField.getText().trim();
-        	String title = titleField.getText().trim();
-        	
-        	// TODO handle exceptions
-        	int codeInt = Integer.parseInt(code);
-        	double maxDailyPriceDouble = Double.parseDouble(maxDailyPrice);
-        	double minDailyPriceDouble = Double.parseDouble(minDailyPrice);
-        	
-        	if (!code.isBlank())
-        		itemQuery.setCode(codeInt);
-        	
-        	if (!location.isBlank())
-        		itemQuery.setLocation(location);
-        	
-        	if (!maxDailyPrice.isBlank())
-        		itemQuery.setMaxDailyPrice(maxDailyPriceDouble);
-        	
-        	if (!minDailyPrice.isBlank())
-        		itemQuery.setMinDailyPrice(minDailyPriceDouble);
-        	
-        	if(!title.isBlank())
-        		itemQuery.setTitle(title);
-        	
-        	itemQuery.setOnlyAvailable(showAvailable.isSelected());
-        	
-        	List<Item> result = null;
-        	
-        	if (bookButton.isSelected()) {
-        		// search for books
-        		BookQuery bookQuery = (BookQuery) itemQuery;
-        		
-        		String publisher = publisherField.getText().trim();
-        		String authorName = authorOrDirectorField.getText().trim();
-        		
-        		String maxPages = maxPageLengthField.getText().trim();
-        		String minPages = minPageLengthField.getText().trim();
-        		
-        		String publishedAfter = publishedAfterField.getText().trim();
-        		String publishedBefore = publishedBeforeField.getText().trim();
-        		
-        		// TODO handle exceptions
-        		int maxPagesInt = 0;
-        		try {
-        			maxPagesInt = Integer.parseInt(maxPages);
-        		} catch (NumberFormatException ex) {
-        			
-        		}
-        		
-        		int minPagesInt = 0;
-        		try {
-        			minPagesInt = Integer.parseInt(minPages);
-        		} catch (NumberFormatException ex) {
-        			
-        		}
-        		
-        		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        		Date publishedAfterDate = null;
-        		try {
-					publishedAfterDate = dateFormat.parse(publishedAfter);
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-        		
-        		Date publishedBeforeDate = null;
-        		try {
-					publishedBeforeDate = dateFormat.parse(publishedBefore);
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-        		
-        		if (!maxPages.isBlank())
-        			bookQuery.setMaxPages(maxPagesInt);
-        		
-        		if (!minPages.isBlank())
-        			bookQuery.setMinPages(minPagesInt);
-        		
-        		if (!publishedAfter.isBlank())
-        			bookQuery.setPublishedAfter(publishedAfterDate);
-        		
-        		if (!publishedBefore.isBlank())
-        			bookQuery.setPublishedBefore(publishedBeforeDate);
-        		
-        		if (!publisher.isBlank())
-        			bookQuery.setPublisher(publisher);
-        		
-        		if (!authorName.isBlank())
-        			bookQuery.setAuthorName(authorName);
-        		
-        		// TODO finish this
-        		Book.findBy(bookQuery);
-        	} else {
-        		// search for films
-        	}
+        	handleSearch();
         });
 
         // Add reset button button.
@@ -184,6 +87,210 @@ public class ItemTabPanel extends TabPanel {
         addButton(deleteButton);
         addButton(loanButton);
     }
+
+	private void handleSearch() {
+		ItemQuery itemQuery = bookButton.isSelected() ? new BookQuery() : new FilmQuery();
+		
+		String code = codeField.getText().trim();
+		String location = locationField.getText().trim();
+		String maxDailyPrice = maxDailyPriceField.getText().trim();
+		String minDailyPrice = minDailyPriceField.getText().trim();
+		String title = titleField.getText().trim();
+		
+		int codeInt = 0;
+		try {
+			if (!code.isBlank())
+				codeInt = Integer.parseInt(code);
+		} catch (NumberFormatException e) {
+			createErrorMessage("Invalid code!");
+			return;
+		}
+		double maxDailyPriceDouble = 0;
+		try {
+			if (!maxDailyPrice.isBlank())
+				maxDailyPriceDouble = Double.parseDouble(maxDailyPrice);
+		} catch (NumberFormatException e) {
+			createErrorMessage("Invalid max daily price!");
+			return;
+		}
+		double minDailyPriceDouble = 0;
+		try {
+			if (!minDailyPrice.isBlank())
+				minDailyPriceDouble = Double.parseDouble(minDailyPrice);
+		} catch (NumberFormatException e) {
+			createErrorMessage("Invalid min daily price!");
+			return;
+		}
+		
+		if (!code.isBlank())
+			itemQuery.setCode(codeInt);
+		
+		if (!location.isBlank())
+			itemQuery.setLocation(location);
+		
+		if (!maxDailyPrice.isBlank())
+			itemQuery.setMaxDailyPrice(maxDailyPriceDouble);
+		
+		if (!minDailyPrice.isBlank())
+			itemQuery.setMinDailyPrice(minDailyPriceDouble);
+		
+		if(!title.isBlank())
+			itemQuery.setTitle(title);
+		
+		itemQuery.setOnlyAvailable(showAvailable.isSelected());
+		
+		List<Item> result = null;
+		
+		if (bookButton.isSelected()) {
+			// search for books
+			handleSearchBook(itemQuery);
+		} else {
+			// search for films
+			handleSearchFilm(itemQuery);
+		}
+	}
+
+	private void handleSearchFilm(ItemQuery itemQuery) {
+		FilmQuery filmQuery = (FilmQuery) itemQuery;
+		
+		String directorName = authorOrDirectorField.getText().trim();
+		
+		String maxLength = maxPageLengthField.getText().trim();
+		String minLength = minPageLengthField.getText().trim();
+		
+		String releasedAfter = publishedAfterField.getText().trim();
+		String releasedBefore = publishedBeforeField.getText().trim();
+		
+		int maxLenInt = 0;
+		try {
+			if (!maxLength.isBlank()) maxLenInt = Integer.parseInt(maxLength);
+		} catch (NumberFormatException ex) {
+			createErrorMessage("Invalid max length!");
+			return;
+		}
+		
+		int minLenInt = 0;
+		try {
+			if (!minLength.isBlank()) minLenInt = Integer.parseInt(minLength);
+		} catch (NumberFormatException ex) {
+			createErrorMessage("Invalid min length!");
+			return;
+		}
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		Date afterDate = null;
+		try {
+			if (!releasedAfter.isBlank()) afterDate = dateFormat.parse(releasedAfter);
+		} catch (ParseException e1) {
+			createErrorMessage("Invalid released after date!");
+			return;
+		}
+		
+		Date beforeDate = null;
+		try {
+			if (!releasedBefore.isBlank()) beforeDate = dateFormat.parse(releasedBefore);
+		} catch (ParseException e1) {
+			createErrorMessage("Invalid released before date!");
+			return;
+		}
+		
+		if (!maxLength.isBlank())
+			filmQuery.setMaxLength(maxLenInt);
+		
+		if (!minLength.isBlank())
+			filmQuery.setMinLength(minLenInt);
+		
+		if (!releasedAfter.isBlank())
+			filmQuery.setReleasedAfter(afterDate);
+		
+		if (!releasedBefore.isBlank())
+			filmQuery.setReleasedBefore(beforeDate);
+		
+		if (!directorName.isBlank())
+			filmQuery.setDirectorName(directorName);
+		
+		List<Film> films = Film.findBy(filmQuery);
+		
+		List<Item> items = new ArrayList<>();
+		for (Film f : films) {
+			items.add(f);
+		}
+		
+		model.setRows(items);
+	}
+
+	private void handleSearchBook(ItemQuery itemQuery) {
+		BookQuery bookQuery = (BookQuery) itemQuery;
+		
+		String publisher = publisherField.getText().trim();
+		String authorName = authorOrDirectorField.getText().trim();
+		
+		String maxPages = maxPageLengthField.getText().trim();
+		String minPages = minPageLengthField.getText().trim();
+		
+		String publishedAfter = publishedAfterField.getText().trim();
+		String publishedBefore = publishedBeforeField.getText().trim();
+		
+		int maxPagesInt = 0;
+		try {
+			if (!maxPages.isBlank()) maxPagesInt = Integer.parseInt(maxPages);
+		} catch (NumberFormatException ex) {
+			createErrorMessage("Invalid max pages!");
+			return;
+		}
+		
+		int minPagesInt = 0;
+		try {
+			if (!minPages.isBlank()) minPagesInt = Integer.parseInt(minPages);
+		} catch (NumberFormatException ex) {
+			createErrorMessage("Invalid min pages!");
+			return;
+		}
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		Date publishedAfterDate = null;
+		try {
+			if (!publishedAfter.isBlank()) publishedAfterDate = dateFormat.parse(publishedAfter);
+		} catch (ParseException e1) {
+			createErrorMessage("Invalid published after date!");
+			return;
+		}
+		
+		Date publishedBeforeDate = null;
+		try {
+			if (!publishedBefore.isBlank()) publishedBeforeDate = dateFormat.parse(publishedBefore);
+		} catch (ParseException e1) {
+			createErrorMessage("Invalid published before date!");
+			return;
+		}
+		
+		if (!maxPages.isBlank())
+			bookQuery.setMaxPages(maxPagesInt);
+		
+		if (!minPages.isBlank())
+			bookQuery.setMinPages(minPagesInt);
+		
+		if (!publishedAfter.isBlank())
+			bookQuery.setPublishedAfter(publishedAfterDate);
+		
+		if (!publishedBefore.isBlank())
+			bookQuery.setPublishedBefore(publishedBeforeDate);
+		
+		if (!publisher.isBlank())
+			bookQuery.setPublisher(publisher);
+		
+		if (!authorName.isBlank())
+			bookQuery.setAuthorName(authorName);
+		
+		List<Book> books = Book.findBy(bookQuery);
+		
+		List<Item> items = new ArrayList<>();
+		for (Book b : books) {
+			items.add(b);
+		}
+		
+		model.setRows(items);
+	}
 
 	private void handleDelete() {
 		int selectedRowIndex = getSelectedRow();

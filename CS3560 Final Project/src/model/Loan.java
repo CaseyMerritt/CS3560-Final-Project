@@ -43,7 +43,7 @@ public class Loan implements CRUDOperations
 	@Column(name = "course")
 	private String course;
 	@Column(name = "paid_amount")
-	private double paidAmount;
+	private Double paidAmount;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "student_id")
 	private Student student;
@@ -132,7 +132,7 @@ public class Loan implements CRUDOperations
 
 	public double getPaidAmount()
 	{
-		return paidAmount;
+		return paidAmount == null ? 0 : paidAmount;
 	}
 
 	public Student getStudent()

@@ -2,17 +2,21 @@ package driver;
 import ui.ApplicationWindow;
 
 // use this class to test attributes and functions during development
-import java.sql.Date;
 
-import model.Book;
-import model.Film;
-import model.Loan;
-import model.Student;
 public class TestDriver
 {
 	public static void main(String args[])
 	{
-		
+//		
+//		SessionFactory s = HibernateSessionFactory.getSessionFactory();
+//		Session e = s.getCurrentSession();
+//		
+//		
+//		e.beginTransaction();
+//		
+//		e.get(Book.class, 29);
+//		
+//		e.getTransaction().commit();
 		new ApplicationWindow();
 		
 ////		Date date1 = new Date("October", 15, 2019);
