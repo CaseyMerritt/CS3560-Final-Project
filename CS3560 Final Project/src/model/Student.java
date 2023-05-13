@@ -103,7 +103,7 @@ public class Student extends Person
 		CriteriaQuery<Student> query = cb.createQuery(Student.class);
 		Root<Student> root = query.from(Student.class);
 		
-		root.fetch("loans", JoinType.LEFT).fetch("item");
+		root.fetch("loans", JoinType.LEFT).fetch("item", JoinType.LEFT);
 		
 		List<Predicate> predicates = new ArrayList<>();
 		
