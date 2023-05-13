@@ -87,7 +87,8 @@ public class Student extends Person
 		double totalBalance = 0.0;
 		
 		for (Loan loan : loans) {
-			totalBalance += loan.calculatePrice() - loan.getPaidAmount();
+			if (loan.getReturnDate() != null)
+				totalBalance += loan.calculatePrice() - loan.getPaidAmount();
 		}
 		
 		return totalBalance;

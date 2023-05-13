@@ -2,6 +2,10 @@ package ui.tab;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -10,6 +14,9 @@ import javax.swing.JTextField;
 
 import ui.RevenueWindow;
 import ui.table.LoanTableModel;
+
+import model.Loan;
+import model.LoanQuery;
 
 public class LoansTabPanel extends TabPanel {
     private JTextField numberField;
@@ -34,7 +41,7 @@ public class LoansTabPanel extends TabPanel {
         // Add search button.
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> {
-            // TODO implement search
+            handleSearch();
         });
 
         // Add reset button button.
@@ -82,6 +89,103 @@ public class LoansTabPanel extends TabPanel {
         addButton(deleteButton);
         addButton(revenueButton);
     }
+
+	private void handleSearch() {
+		LoanQuery q = new LoanQuery();
+		
+		String number = numberField.getText().trim();
+		String title = titleField.getText().trim();
+		String broncoId = broncoIdField.getText().trim();
+		String name = nameField.getText().trim();
+		String loanedAfter = loanedAfterField.getText().trim();
+		String loanedBefore = loanedBeforeField.getText().trim();
+		String dueAfter = dueAfterField.getText().trim();
+		String dueBefore = dueBeforeField.getText().trim();
+		String course = courseField.getText().trim();
+		
+		int numInt = 0;
+		if (!number.isBlank())
+			try {
+				numInt = Integer.parseInt(number);
+			} catch (NumberFormatException e) {
+				createErrorMessage("Invalid number!");
+				return;
+			}
+		int broncoIdInt = 0;
+		if (!broncoId.isBlank())
+			try {
+				broncoIdInt = Integer.parseInt(broncoId);
+			} catch (NumberFormatException e) {
+				createErrorMessage("Invalid Bronco ID!");
+				return;
+			}
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+		Date loanAfterDate = null;
+		if (!loanedAfter.isBlank())
+			try {
+				loanAfterDate = format.parse(loanedAfter);
+			} catch (ParseException e) {
+				createErrorMessage("Invalid loaned after date!");
+				return;
+			}
+		Date loanBeforeDate = null;
+		if (!loanedBefore.isBlank())
+			try {
+				loanBeforeDate = format.parse(loanedBefore);
+			} catch (ParseException e) {
+				createErrorMessage("Invalid loaned before date!");
+				return;
+			}
+		Date dueAfterDate = null;
+		if (!dueAfter.isBlank())
+			try {
+				dueAfterDate = format.parse(dueAfter);
+			} catch (ParseException e) {
+				createErrorMessage("Invalid due after date!");
+				return;
+			}
+		Date dueBeforeDate = null;
+		if (!dueBefore.isBlank())
+			try {
+				dueBeforeDate = format.parse(dueBefore);
+			} catch (ParseException e) {
+				createErrorMessage("Invalid due before date!");
+				return;
+			}
+		
+		if (!number.isBlank())
+			q.setNumber(numInt);
+		
+		if (!title.isBlank())
+			q.setItemTitle(title);
+		
+		if (!broncoId.isBlank())
+			q.setBroncoId(broncoIdInt);
+		
+		if (!name.isBlank())
+			q.setStudentName(name);
+		
+		if (!loanedAfter.isBlank())
+			q.setLoanedAfter(loanAfterDate);
+		
+		if (!loanedBefore.isBlank())
+			q.setLoanedBefore(loanBeforeDate);
+		
+		if (!dueAfter.isBlank())
+			q.setDueAfter(dueAfterDate);
+		
+		if (!dueBefore.isBlank())
+			q.setDueBefore(dueBeforeDate);
+		
+		if (!course.isBlank())
+			q.setCourse(course);
+		
+		q.setOnlyOverdue(showOverDue.isSelected());
+		
+		List<Loan> loans = Loan.findBy(q);
+		
+		model.setRows(loans);
+	}
 
 	private void handleReset() {
 		numberField.setText("");

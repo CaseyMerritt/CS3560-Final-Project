@@ -163,20 +163,21 @@ public class Loan implements CRUDOperations
 	
 	public double calculateFines()
 	{
-		double fines = 0.0;
-		fines = item.getDailyPrice() * calculateDaysBetweenDates(dueDate, returnDate);
-		fines += fines * 0.1;
+		if (new Date().compareTo(dueDate) <= 0) return 0.0;
+		
+		Date endDate = returnDate == null ? new Date() : returnDate;
+		
+		double fines = (item.getDailyPrice() * calculateDaysBetweenDates(dueDate, endDate)) * 0.1;
+
 		return fines;
 	}
 	
 	public double calculatePrice()
-	{
-		double price = 0.0;
-		if (returnDate.compareTo(dueDate) > 0) {	// returnDate past dueDate
-			price = calculateEstimatedPrice() + calculateFines();
-		} else {
-			price = item.getDailyPrice() * calculateDaysBetweenDates(loanDate, returnDate);
-		}
+	{	
+		Date endDate = returnDate == null ? new Date() : returnDate;
+		
+		double price = item.getDailyPrice() * calculateDaysBetweenDates(loanDate, endDate) + calculateFines();
+
 		return price;
 	}
 
@@ -184,17 +185,7 @@ public class Loan implements CRUDOperations
 	 * Dates stored in instance and database using java.sql.Date class
 	 * Converted into java.time.LocalDate class so DAYS.between() can be used
 	 */
-	public long calculateDaysBetweenDates(Date start, Date end){
-		//long days = 0;
-		//try {
-			//LocalDate startDate = start.toLocalDate();
-			//LocalDate endDate = end.toLocalDate();
-			//days = ChronoUnit.DAYS.between(startDate,endDate);
-		//} catch (Exception e) {
-			//System.out.println("Error occurred while doing math with dates.\n" + 
-							   //"Date 1: " + start + "\n" +
-							   //"Date 2: " + end);
-		//}
+	private long calculateDaysBetweenDates(Date start, Date end){
 		long days = ChronoUnit.DAYS.between(start.toInstant(),end.toInstant());
     
 		return days;
@@ -209,8 +200,8 @@ public class Loan implements CRUDOperations
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Loan> query = cb.createQuery(Loan.class);
 		Root<Loan> root = query.from(Loan.class);
-		Join<Loan, Student> joinStudent = root.join("student");
-		Join<Loan, Item> joinItem = root.join("item");
+		Join<Loan, Student> joinStudent = (Join<Loan, Student>) root.<Loan, Student>fetch("student");
+		Join<Loan, Item> joinItem = (Join<Loan, Item>) root.<Loan, Item>fetch("item");
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
@@ -231,7 +222,7 @@ public class Loan implements CRUDOperations
 		}
 		
 		if (loanQuery.getBroncoId() != null) {
-			predicates.add(cb.equal(joinStudent.get("bronco_id"), loanQuery.getBroncoId()));
+			predicates.add(cb.equal(joinStudent.get("broncoId"), loanQuery.getBroncoId()));
 		}
 		
 		if (loanQuery.getCourse() != null) {
@@ -241,23 +232,23 @@ public class Loan implements CRUDOperations
 		}
 		
 		if (loanQuery.isOnlyOverdue()) {
-			predicates.add(cb.lessThan(root.get("due_date"), new Date()));
+			predicates.add(cb.lessThan(root.get("dueDate"), new Date()));
 		}
 		
 		if (loanQuery.getDueAfter() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(root.get("due_date"), loanQuery.getDueAfter()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("dueDate"), loanQuery.getDueAfter()));
 		}
 		
 		if (loanQuery.getDueBefore() != null) {
-			predicates.add(cb.lessThanOrEqualTo(root.get("due_date"), loanQuery.getDueBefore()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("dueDate"), loanQuery.getDueBefore()));
 		}
 		
 		if (loanQuery.getLoanedAfter() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(root.get("loan_date"), loanQuery.getLoanedAfter()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("loanDate"), loanQuery.getLoanedAfter()));
 		}
 		
 		if (loanQuery.getLoanedBefore() != null) {
-			predicates.add(cb.lessThanOrEqualTo(root.get("loan_date"), loanQuery.getLoanedBefore()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("loanDate"), loanQuery.getLoanedBefore()));
 		}
 		
 		if (predicates.size() > 0) 
