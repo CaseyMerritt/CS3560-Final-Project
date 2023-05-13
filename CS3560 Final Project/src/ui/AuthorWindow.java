@@ -15,73 +15,49 @@ public class AuthorWindow extends JFrame{
     private JPanel panel;
     private Author author;
 
-    public AuthorWindow() {
-		setupWindow();
-		button.setText("Save");
-		button.addActionListener(e -> {
-			String name = nameField.getText().trim();
-			if (name.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Name.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-            String nationality = nationalityField.getText().trim();
-			if (nationality.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Nationality.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-            String subject = subjectField.getText().trim();
-			if (subject.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Subject.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			
-			// TODO handle SQLException
-			new Author(name,nationality,subject).create();
-			
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-		});
-	}
-
     public AuthorWindow(Author author) {
+    	setupWindow();
 		this.author = author;
 		this.nameField.setText(author.getName());
 		this.nationalityField.setText(author.getNationality());
         this.subjectField.setText(author.getSubject());
-		setupWindow();
+		
 		button.setText("Update");
 		button.addActionListener(e -> {
-			String name = nameField.getText().trim();
-			if (name.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Name.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-            String nationality = nationalityField.getText().trim();
-			if (nationality.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Nationality.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-            String subject = subjectField.getText().trim();
-			if (subject.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Subject.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			
-			// TODO handle SQLException
-			this.author.setName(name);
-			this.author.setNationality(nationality);
-            this.author.setSubject(subject);
-			author.update();
-			
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			handleUpdate(author);
 		});
 	}
 
+	private void handleUpdate(Author author) {
+		String name = nameField.getText().trim();
+		if (name.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Invalid name!", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		String nationality = nationalityField.getText().trim();
+		if (nationality.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Invalid nationality!", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		String subject = subjectField.getText().trim();
+		if (subject.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Invalid subject!", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		// TODO handle exceptions
+		this.author.setName(name);
+		this.author.setNationality(nationality);
+		this.author.setSubject(subject);
+		author.update();
+		
+		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+	}
+
     private void setupWindow() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(250, 300));
         setTitle("Author");
 		

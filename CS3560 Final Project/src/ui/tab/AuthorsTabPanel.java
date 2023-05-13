@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import model.Author;
+import ui.AuthorWindow;
 import ui.table.AuthorTableModel;
 
 public class AuthorsTabPanel extends TabPanel {
@@ -47,7 +48,7 @@ public class AuthorsTabPanel extends TabPanel {
         // Add edit button.
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(e -> {
-        	// TODO implement editing author
+        	handleEdit();
         });
 
         // Add delete button.
@@ -62,6 +63,16 @@ public class AuthorsTabPanel extends TabPanel {
         addButton(editButton);
         addButton(deleteButton);
     }
+
+	private void handleEdit() {
+		int selectedRowIndex = getSelectedRow();
+		
+		if (selectedRowIndex < 0) return;
+		
+		Author author = (Author) model.getRow(selectedRowIndex);
+		
+		new AuthorWindow(author);
+	}
 
 	private void handleDelete() {
 		int selectedRowIndex = getSelectedRow();
@@ -91,16 +102,18 @@ public class AuthorsTabPanel extends TabPanel {
 		String subject = subjectField.getText().trim();
 		
 		if (name.isBlank()) {
-			JOptionPane.showMessageDialog(this, "Name cannot be blank!", "Error", JOptionPane.ERROR_MESSAGE);
+			createErrorMessage("Invalid name!");
 			return;
 		}
 		
 		if (nationality.isBlank()) {
-			nationality = null;
+			createErrorMessage("Invalid nationality!");
+			return;
 		}
 		
 		if (subject.isBlank()) {
-			subject = null;
+			createErrorMessage("Invalid subject!");
+			return;
 		}
 		
 		Author author = new Author(name, nationality, subject);
