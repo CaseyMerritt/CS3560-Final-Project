@@ -301,6 +301,8 @@ public class Loan implements CRUDOperations
 		Session session = sessionFactory.getCurrentSession();
 		
 		session.beginTransaction();
+		item.setAvailable(true);
+		session.update(item);
 		session.delete(this);
 		session.getTransaction().commit();
 	}

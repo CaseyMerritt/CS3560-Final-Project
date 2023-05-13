@@ -125,7 +125,15 @@ public class Item implements CRUDOperations
 	
 	public Loan makeLoanTo(Student student, int numberDays, String course) {
 		Loan loan = new Loan(student, this, course, numberDays);
-		loan.create();
+		
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		session.save(loan);
+		loan.getItem().setAvailable(false);
+		session.update(loan.getItem());
+		session.getTransaction().commit();
 		
 		return loan;
 	}

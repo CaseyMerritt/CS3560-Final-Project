@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 
 import ui.RevenueWindow;
 import ui.table.LoanTableModel;
-
+import model.Item;
 import model.Loan;
 import model.LoanQuery;
 
@@ -65,21 +65,8 @@ public class LoansTabPanel extends TabPanel {
 
         // Add delete button.
         JButton deleteButton = new JButton("Delete");
-        deleteButton.addActionListener(new ActionListener() {
-            //Handle delete.
-            public void actionPerformed(ActionEvent e) {
-                // Get loan id from user
-                String deleteLoanTerm = JOptionPane.showInputDialog("Enter Number To Delete");
-
-                try{
-                    int loanId = Integer.parseInt(deleteLoanTerm);
-                    // delete loan in database
-                    // database.deleteItem(loanId);
-                }catch (NumberFormatException ex){
-                    // Show error message
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid loan Number.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+        deleteButton.addActionListener(e -> {
+        	handleDelete();
         });
         
         // Add Revenue button.
@@ -96,6 +83,28 @@ public class LoansTabPanel extends TabPanel {
         addButton(deleteButton);
         addButton(revenueButton);
     }
+
+	private void handleDelete() {
+		int selectedRowIndex = getSelectedRow();
+		
+		if (selectedRowIndex < 0) return;
+		
+		Loan loan = (Loan) model.getRow(selectedRowIndex);;
+
+		// confirm deletion
+		int option = JOptionPane.showConfirmDialog(this, 
+		"Are you sure you want to delete the loan with number: " + loan.getNumber(), 
+		"Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
+		
+		if(option == JOptionPane.YES_OPTION){
+			// TODO handle exceptions
+			loan.delete();
+		    model.removeRow(selectedRowIndex);
+			
+		    // Display confirmation of deletion
+		    JOptionPane.showMessageDialog(null, "Loan deleted");
+		}
+	}
 
 	private void handleSearch() {
 		LoanQuery q = new LoanQuery();
