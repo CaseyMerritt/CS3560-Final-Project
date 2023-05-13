@@ -12,7 +12,7 @@ public class ReceiptDriver {
 //		Loan loan = new Loan(student, item, "Course", 30);
 //		
 //		ReceiptWindow win = new ReceiptWindow(loan);
-		new StudentWindow();
+		//new StudentWindow();
 	}
 
 }

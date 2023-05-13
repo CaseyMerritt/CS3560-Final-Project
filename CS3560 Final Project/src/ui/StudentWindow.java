@@ -22,58 +22,34 @@ public class StudentWindow extends JFrame {
 	private JButton button;
 	private JPanel panel;
 	private Student student;
-
-	public StudentWindow() {
+	
+	public StudentWindow(Student student) {
 		setupWindow();
+		this.student = student;
+		this.broncoIdField.setText(student.getBroncoId() + "");
+		this.broncoIdField.setEditable(false);
+		this.nameField.setText(student.getName());
+		
 		button.setText("Save");
 		button.addActionListener(e -> {
 			int broncoId;
 			try {
 				broncoId = Integer.parseInt(broncoIdField.getText());
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Bronco ID.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Invalid Bronco ID!", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
 			String name = nameField.getText().trim();
 			if (name.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Name.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			
-			// TODO handle SQLException
-			new Student(name, broncoId).create();
-			
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-		});
-	}
-	
-	public StudentWindow(Student student) {
-		this.student = student;
-		this.broncoIdField.setText(student.getBroncoId() + "");
-		this.broncoIdField.setEditable(false);
-		this.nameField.setText(student.getName());
-		setupWindow();
-		button.setText("Update");
-		button.addActionListener(e -> {
-			int broncoId;
-			try {
-				broncoId = Integer.parseInt(broncoIdField.getText());
-			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Bronco ID.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			
-			String name = nameField.getText().trim();
-			if (name.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Name.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Invalid name!", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
 			// TODO handle SQLException
 			this.student.setBroncoId(broncoId);
 			this.student.setName(name);
-			student.update();
+			this.student.update();
 			
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		});
@@ -81,7 +57,7 @@ public class StudentWindow extends JFrame {
 	
 	private void setupWindow() {
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(250, 300));
         setTitle("Student");
 		

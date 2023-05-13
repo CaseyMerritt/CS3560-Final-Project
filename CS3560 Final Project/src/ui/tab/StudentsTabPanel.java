@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import model.Student;
+import ui.StudentWindow;
 import ui.table.StudentTableModel;
 
 public class StudentsTabPanel extends TabPanel {
@@ -47,7 +48,7 @@ public class StudentsTabPanel extends TabPanel {
         // Add edit button.
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(e -> {
-        	// TODO implement editing student
+        	handleEdit();
         });
         
         // Add delete button.
@@ -62,6 +63,16 @@ public class StudentsTabPanel extends TabPanel {
         addButton(editButton);
         addButton(deleteButton);     
     }
+
+	private void handleEdit() {
+		int selectedRowIndex = getSelectedRow();
+		
+		if (selectedRowIndex < 0) return;
+		
+		Student student = (Student) model.getRow(selectedRowIndex);
+		
+		new StudentWindow(student);
+	}
 
 	private void handleDelete() {
 		int selectedRowIndex = getSelectedRow();
@@ -90,12 +101,12 @@ public class StudentsTabPanel extends TabPanel {
     	String name = nameField.getText().trim();
     	
     	if (name.isBlank()) {
-    		JOptionPane.showMessageDialog(this, "Name cannot be blank!", "Error", JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(this, "Invalid name!", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
     	}
     	
     	if (broncoId.isBlank()) {
-    		JOptionPane.showMessageDialog(this, "Bronco ID cannot be blank!", "Error", JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(this, "Invalid Bronco ID!", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
     	}
     	

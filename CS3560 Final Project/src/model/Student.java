@@ -77,7 +77,7 @@ public class Student extends Person
 		int numberActiveLoans = 0;
 		
 		for (Loan loan : loans) {
-			if (loan.getReturnDate() != null) numberActiveLoans++;
+			if (loan.getReturnDate() == null) numberActiveLoans++;
 		}
 		
 		return numberActiveLoans;
@@ -87,8 +87,7 @@ public class Student extends Person
 		double totalBalance = 0.0;
 		
 		for (Loan loan : loans) {
-			if (loan.getReturnDate() != null)
-				totalBalance += loan.calculatePrice() - loan.getPaidAmount();
+			totalBalance += loan.calculatePrice() - loan.getPaidAmount();
 		}
 		
 		return totalBalance;
@@ -104,7 +103,7 @@ public class Student extends Person
 		CriteriaQuery<Student> query = cb.createQuery(Student.class);
 		Root<Student> root = query.from(Student.class);
 		
-		root.fetch("loans", JoinType.LEFT);
+		root.fetch("loans", JoinType.LEFT).fetch("item");
 		
 		List<Predicate> predicates = new ArrayList<>();
 		
