@@ -19,12 +19,10 @@ public abstract class EntityTableModel<T> extends AbstractTableModel {
 	}
 	
 	public T getRow(int row) {
-		// TODO handle exceptions
 		return items.get(row);
 	}
 	
 	public void removeRow(int row) {
-		// TODO handle exceptions
 		items.remove(row);
 		this.fireTableRowsDeleted(row, row);
 	}

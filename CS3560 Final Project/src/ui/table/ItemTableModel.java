@@ -49,6 +49,16 @@ public class ItemTableModel extends EntityTableModel<Item> {
 				}
 			} else {
 				Film f = (Film) item;
+				
+				switch (columnIndex) {
+				case 5:
+					return f.getLength();
+				case 6:
+					if (f.getReleaseDate() == null) return "";
+					return format.format(f.getReleaseDate());
+				case 7:
+					return "";
+				}
 			}
 		}
 		return null;
