@@ -68,6 +68,12 @@ public class ItemTabPanel extends TabPanel {
         addButton.addActionListener(e -> {
             // TODO implement adding new item
         });
+        
+        // Add add button.
+        JButton editButton = new JButton("Edit");
+        editButton.addActionListener(e -> {
+            // TODO implement edit item
+        });
 
         // Add delete button.
         JButton deleteButton = new JButton("Delete");
@@ -90,6 +96,7 @@ public class ItemTabPanel extends TabPanel {
         addButton(searchButton);
         addButton(resetButton);
         addButton(addButton);
+        addButton(editButton);
         addButton(deleteButton);
         addButton(loanButton);
     }
