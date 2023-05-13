@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import model.Director;
+import ui.DirectorWindow;
 import ui.table.DirectorTableModel;
 
 public class DirectorsTabPanel extends TabPanel {
@@ -47,7 +48,7 @@ public class DirectorsTabPanel extends TabPanel {
         // Add edit button.
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(e -> {
-        	// TODO implement editing author
+        	handleEdit();
         });
 
         // Add delete button.
@@ -62,6 +63,16 @@ public class DirectorsTabPanel extends TabPanel {
         addButton(editButton);
         addButton(deleteButton);
     }
+
+	private void handleEdit() {
+		int selectedRowIndex = getSelectedRow();
+		
+		if (selectedRowIndex < 0) return;
+		
+		Director director = (Director) model.getRow(selectedRowIndex);
+		
+		new DirectorWindow(director);
+	}
 
 	private void handleDelete() {
 		int selectedRowIndex = getSelectedRow();
@@ -91,16 +102,18 @@ public class DirectorsTabPanel extends TabPanel {
 		String style = styleField.getText().trim();
 		
 		if (name.isBlank()) {
-			JOptionPane.showMessageDialog(this, "Name cannot be blank!", "Error", JOptionPane.ERROR_MESSAGE);
+			createErrorMessage("Invalid name!");
 			return;
 		}
 		
 		if (nationality.isBlank()) {
-			nationality = null;
+			createErrorMessage("Invalid nationality!");
+			return;
 		}
 		
 		if (style.isBlank()) {
-			style = null;
+			createErrorMessage("Invalid style!");
+			return;
 		}
 		
 		Director director = new Director(name, nationality, style);

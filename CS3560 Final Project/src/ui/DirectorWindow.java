@@ -15,58 +15,31 @@ public class DirectorWindow extends JFrame{
     private JPanel panel;
     private Director director;
 
-    public DirectorWindow() {
-		setupWindow();
-		button.setText("Save");
-		button.addActionListener(e -> {
-			String name = nameField.getText().trim();
-			if (name.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Name.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-            String nationality = nationalityField.getText().trim();
-			if (nationality.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Nationality.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-            String style = styleField.getText().trim();
-			if (style.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Style.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			
-			// TODO handle SQLException
-			new Director(name,nationality,style).create();
-			
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-		});
-	}
-
     public DirectorWindow(Director director) {
+    	setupWindow();
+    	
 		this.director = director;
 		this.nameField.setText(director.getName());
 		this.nationalityField.setText(director.getNationality());
         this.styleField.setText(director.getStyle());
-		setupWindow();
-		button.setText("Update");
+		
+		button.setText("Save");
 		button.addActionListener(e -> {
 			String name = nameField.getText().trim();
 			if (name.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Name.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Invalid name!", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
             String nationality = nationalityField.getText().trim();
 			if (nationality.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Nationality.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Invalid nationality!", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
             String style = styleField.getText().trim();
 			if (style.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid Subject.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Invalid style!", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
@@ -74,14 +47,14 @@ public class DirectorWindow extends JFrame{
 			this.director.setName(name);
 			this.director.setNationality(nationality);
             this.director.setStyle(style);
-			director.update();
+			this.director.update();
 			
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		});
 	}
 
     private void setupWindow() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(250, 300));
         setTitle("Director");
 		

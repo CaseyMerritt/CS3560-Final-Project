@@ -22,7 +22,7 @@ public class AuthorWindow extends JFrame{
 		this.nationalityField.setText(author.getNationality());
         this.subjectField.setText(author.getSubject());
 		
-		button.setText("Update");
+		button.setText("Save");
 		button.addActionListener(e -> {
 			handleUpdate(author);
 		});
