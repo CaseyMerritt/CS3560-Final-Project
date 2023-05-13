@@ -47,12 +47,6 @@ public class LoansTabPanel extends TabPanel<Loan> {
             // Handle Reset.
             handleReset();
         });
-
-        // Add add button.
-        JButton addButton = new JButton("Add New");
-        addButton.addActionListener(e -> {
-            // TODO Handle Add.
-        });
         
         // Add edit button.
         JButton editButton = new JButton("Edit");
@@ -75,7 +69,6 @@ public class LoansTabPanel extends TabPanel<Loan> {
 
         addButton(searchButton);
         addButton(resetButton);
-        addButton(addButton);
         addButton(editButton);
         addButton(deleteButton);
         addButton(revenueButton);
