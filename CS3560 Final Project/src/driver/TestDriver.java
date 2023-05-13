@@ -17,7 +17,7 @@ public class TestDriver
 //		e.get(Book.class, 29);
 //		
 //		e.getTransaction().commit();
-		new ApplicationWindow();
+		//new ApplicationWindow();
 		
 ////		Date date1 = new Date("October", 15, 2019);
 ////		Author author = new Author("You Suck At Cooking", "American", "cooking");

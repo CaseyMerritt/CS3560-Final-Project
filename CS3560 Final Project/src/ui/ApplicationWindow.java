@@ -12,6 +12,11 @@ import ui.tab.LoansTabPanel;
 import ui.tab.StudentsTabPanel;
 
 public class ApplicationWindow extends JFrame{
+	
+	public static void main(String[] args) {
+		new ApplicationWindow();
+	}
+	
     public ApplicationWindow(){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1200, 650));
