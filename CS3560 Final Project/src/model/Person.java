@@ -9,7 +9,7 @@ import org.hibernate.SessionFactory;
 import database.HibernateSessionFactory;
 
 @MappedSuperclass
-public abstract class Person implements CRUDOperations
+public abstract class Person implements CrudOperations
 {
 	@Column(name = "name")
 	private String name;

@@ -16,7 +16,7 @@ import database.HibernateSessionFactory;
 @Entity
 @Table(name = "items", schema = "library")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Item implements CRUDOperations
+public abstract class Item implements CrudOperations
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

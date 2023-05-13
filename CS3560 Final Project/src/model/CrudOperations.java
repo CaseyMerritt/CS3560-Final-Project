@@ -1,6 +1,6 @@
 package model;
 
-public interface CRUDOperations
+public interface CrudOperations
 {
 	public void create();
 	public void update();

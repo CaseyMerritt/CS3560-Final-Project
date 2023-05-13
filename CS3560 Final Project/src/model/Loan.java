@@ -28,7 +28,7 @@ import database.HibernateSessionFactory;
 
 @Entity
 @Table(name = "loans", schema = "library")
-public class Loan implements CRUDOperations
+public class Loan implements CrudOperations
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
