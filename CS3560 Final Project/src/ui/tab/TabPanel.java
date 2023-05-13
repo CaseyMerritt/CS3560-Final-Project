@@ -16,14 +16,14 @@ import javax.swing.ListSelectionModel;
 
 import ui.table.EntityTableModel;
 
-public abstract class TabPanel extends JPanel {
+public abstract class TabPanel<T> extends JPanel {
 	
 	private final JPanel fieldsPanel;
 	private final JPanel buttonPanel;
 	private final JTable table;
-	protected final EntityTableModel model;
+	protected final EntityTableModel<T> model;
 	
-	public TabPanel(int fieldRows, int fieldColumns, EntityTableModel model) {
+	public TabPanel(int fieldRows, int fieldColumns, EntityTableModel<T> model) {
 		this.model = model;
 		
 		setLayout(new BorderLayout());

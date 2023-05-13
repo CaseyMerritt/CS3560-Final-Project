@@ -1,11 +1,10 @@
 package ui.tab;
 
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -15,17 +14,16 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import ui.MakeLoanWindow;
-import ui.table.ItemTableModel;
 import model.Book;
 import model.BookQuery;
 import model.Film;
 import model.FilmQuery;
-import model.ItemQuery;
-import model.Student;
 import model.Item;
+import model.ItemQuery;
+import ui.MakeLoanWindow;
+import ui.table.ItemTableModel;
 
-public class ItemTabPanel extends TabPanel {
+public class ItemTabPanel extends TabPanel<Item> {
 
     private JTextField codeField;
     private JTextField titleField;
@@ -151,8 +149,6 @@ public class ItemTabPanel extends TabPanel {
 			itemQuery.setTitle(title);
 		
 		itemQuery.setOnlyAvailable(showAvailable.isSelected());
-		
-		List<Item> result = null;
 		
 		if (bookButton.isSelected()) {
 			// search for books

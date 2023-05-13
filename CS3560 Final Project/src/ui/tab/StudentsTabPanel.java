@@ -10,7 +10,7 @@ import model.Student;
 import ui.StudentWindow;
 import ui.table.StudentTableModel;
 
-public class StudentsTabPanel extends TabPanel {
+public class StudentsTabPanel extends TabPanel<Student> {
     private JTextField broncoIdField;
     private JTextField nameField;
 

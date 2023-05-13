@@ -13,7 +13,7 @@ import javax.swing.*;
 
 public class RevenueWindow extends JFrame {
 	private JTable table;
-	private JComboBox year;
+	private JComboBox<String> year;
 	private JTextField revenue;
 	private JTextField totalBalance;
 	
@@ -26,7 +26,7 @@ public class RevenueWindow extends JFrame {
         setPreferredSize(new Dimension(500, 300));
         setTitle("Revenue Report");
 		
-        year = new JComboBox();
+        year = new JComboBox<>();
         year.addItem("2023");
         revenue = new JTextField(20);
         revenue.setText("$5.00");

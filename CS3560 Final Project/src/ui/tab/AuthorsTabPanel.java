@@ -10,7 +10,7 @@ import model.Author;
 import ui.AuthorWindow;
 import ui.table.AuthorTableModel;
 
-public class AuthorsTabPanel extends TabPanel {
+public class AuthorsTabPanel extends TabPanel<Author> {
     private JTextField nameField;
     private JTextField nationalityField;
     private JTextField subjectField;

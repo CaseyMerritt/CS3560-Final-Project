@@ -20,7 +20,7 @@ import model.*;
 public class MakeLoanWindow extends JFrame {
 	private JTextField course;
 	private JTextField itemTitle;
-	private JComboBox student;
+	private JComboBox<Student> student;
 	private JTextField numberDays;
 	private Item item;
 	
@@ -35,7 +35,7 @@ public class MakeLoanWindow extends JFrame {
         setTitle("Loan Item");
         
         itemTitle = new JTextField(20);
-        student = new JComboBox<String>();
+        student = new JComboBox<Student>();
         course = new JTextField(20);
         numberDays = new JTextField(20);
         

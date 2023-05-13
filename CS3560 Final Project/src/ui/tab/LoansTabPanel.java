@@ -1,7 +1,5 @@
 package ui.tab;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,13 +10,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import ui.RevenueWindow;
-import ui.table.LoanTableModel;
-import model.Item;
 import model.Loan;
 import model.LoanQuery;
+import ui.RevenueWindow;
+import ui.table.LoanTableModel;
 
-public class LoansTabPanel extends TabPanel {
+public class LoansTabPanel extends TabPanel<Loan> {
     private JTextField numberField;
     private JTextField titleField;
     private JTextField broncoIdField;

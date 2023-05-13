@@ -10,7 +10,7 @@ import model.Director;
 import ui.DirectorWindow;
 import ui.table.DirectorTableModel;
 
-public class DirectorsTabPanel extends TabPanel {
+public class DirectorsTabPanel extends TabPanel<Director> {
     private JTextField nameField;
     private JTextField nationalityField;
     private JTextField styleField;
