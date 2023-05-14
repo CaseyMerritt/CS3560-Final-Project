@@ -321,8 +321,14 @@ public class ItemTabPanel extends TabPanel<Item> {
 		"Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
 		
 		if(option == JOptionPane.YES_OPTION){
-			// TODO handle exceptions
-		    item.delete();
+			try {
+				item.delete();
+			} catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(this, "Cannot delete item! Check for existing loans!", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+		    
 		    model.removeRow(selectedRowIndex);
 			
 		    // Display confirmation of deletion

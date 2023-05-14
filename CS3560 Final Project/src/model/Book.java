@@ -20,6 +20,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -96,9 +97,19 @@ public class Book extends Item
 	
 	@Override
 	public void delete() {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
 		this.authors.clear();
-		update();
-		super.delete();
+		try {
+			session.update(this);
+			session.delete(this);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			throw new IllegalStateException("Unable to delete");
+		}
 	}
 	
 	// overriding toString()
