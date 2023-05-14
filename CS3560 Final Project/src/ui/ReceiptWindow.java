@@ -75,7 +75,7 @@ public class ReceiptWindow extends JFrame {
 		
 		JTextField estimateField = new JTextField();
 		estimateField.setEditable(false);
-		estimateField.setText(currencyFormat.format(30));
+		estimateField.setText(currencyFormat.format(loan.calculateEstimatedPrice()));
 		
 		JPanel estimatePanel = new JPanel(new BorderLayout());
 		estimatePanel.add(new JLabel("Estimated Price:"), BorderLayout.WEST);
