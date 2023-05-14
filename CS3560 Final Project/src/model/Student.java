@@ -19,6 +19,8 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import database.HibernateSessionFactory;
 
@@ -82,6 +84,10 @@ public class Student extends Person
 		
 		return numberActiveLoans;
 	}
+
+	public List<Loan> getLoans(){
+		return loans;
+	}
 	
 	public double calculateBalance() {
 		double totalBalance = 0.0;
@@ -125,6 +131,28 @@ public class Student extends Person
 		session.getTransaction().commit();
 		
 		return students;
+	}
+
+	public List<Student> getAllStudents(){
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		Transaction transaction = null;
+
+        List<Student> Students = null;
+    
+        try {
+            transaction = session.beginTransaction();
+            Query query = session.createQuery("from Student", Student.class);
+            Students = query.list();
+            transaction.commit();
+        } catch (RuntimeException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+    
+        return Students;
 	}
 	
 }

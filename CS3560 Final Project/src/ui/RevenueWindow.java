@@ -11,6 +11,11 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.*;
 
+import java.util.List;
+
+import model.Loan;
+import model.Student;
+
 public class RevenueWindow extends JFrame {
 	private JTable table;
 	private JComboBox<String> year;
@@ -29,10 +34,10 @@ public class RevenueWindow extends JFrame {
         year = new JComboBox<>();
         year.addItem("2023");
         revenue = new JTextField(20);
-        revenue.setText("$5.00");
+        revenue.setText("");
         revenue.setEditable(false);
         totalBalance = new JTextField(20);
-        totalBalance.setText("$63.00");
+        totalBalance.setText("");
         totalBalance.setEditable(false);
         
         JPanel fieldPanel = new JPanel(new GridLayout());
@@ -59,14 +64,28 @@ public class RevenueWindow extends JFrame {
         };
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         table = new JTable(model);
+
+        Student student = new Student();
+        List<Student> studentsList = student.getAllStudents();
         
-        Object[][] data = {
-        		{"12345", "John", "$0.00", "$0.00"},
-        		{"67890", "Mary", "$63.00", "$5.00"}
-        };
-        
-        model.addRow(data[0]);
-        model.addRow(data[1]);
+        double rev = 0;
+        double totalB = 0;
+        for(int i = 0; i < studentsList.size(); i++){
+            String[] arr = new String[4];
+
+            arr[0] = String.valueOf(studentsList.get(i).getBroncoId());
+            arr[1] = studentsList.get(i).getName();
+            arr[2] = String.valueOf(getBalance(studentsList.get(i).getLoans()));
+            arr[3] = String.valueOf(getPaid(studentsList.get(i).getLoans()));
+
+            totalB += Double.parseDouble(arr[2]);
+            rev += Double.parseDouble(arr[3]);
+
+            model.addRow(arr);
+        }
+
+        revenue.setText(String.valueOf(rev));
+        totalBalance.setText(String.valueOf(totalB));
 
         // Create a JScrollPane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);   
@@ -79,4 +98,22 @@ public class RevenueWindow extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 	}
+
+    public double getPaid(List<Loan> loans){
+        double totalPaid = 0;
+        for(int i = 0; i < loans.size(); i++){
+            totalPaid += loans.get(i).getPaidAmount();
+        }
+
+        return totalPaid;
+    }
+
+    public double getBalance(List<Loan> loans){
+        double totalBalance = 0;
+        for(int i = 0; i < loans.size(); i++){
+            totalBalance += loans.get(i).calculatePrice();
+        }
+
+        return totalBalance;
+    }
 }
