@@ -20,6 +20,7 @@ import model.Film;
 import model.FilmQuery;
 import model.Item;
 import model.ItemQuery;
+import ui.ItemWindow;
 import ui.MakeLoanWindow;
 import ui.table.ItemTableModel;
 
@@ -64,13 +65,19 @@ public class ItemTabPanel extends TabPanel<Item> {
         // Add add button.
         JButton addButton = new JButton("Add New");
         addButton.addActionListener(e -> {
-            // TODO implement adding new item
+            new ItemWindow(bookButton.isSelected() ? ItemWindow.BOOK : ItemWindow.FILM);
         });
         
         // Add add button.
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(e -> {
-            // TODO implement edit item
+        	int selectedRowIndex = getSelectedRow();
+    		
+    		if (selectedRowIndex < 0) return;
+    		
+    		Item item = (Item) model.getRow(selectedRowIndex);;
+        	
+            new ItemWindow(item);
         });
 
         // Add delete button.

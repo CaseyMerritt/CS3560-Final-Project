@@ -1,5 +1,6 @@
 package model;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,6 +25,7 @@ import database.HibernateSessionFactory;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Author extends Person
 {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -81,8 +83,7 @@ public class Author extends Person
 	@Override
 	public String toString()
 	{
-		return "Author: " + super.getName() +  "\n\tNationality: " + nationality +
-				"\n\tSubject: " + subject + "\n";
+		return id + " - " + getName();
 	}
 	
 	public static List<Author> findBy(String name, String nationality, String subject) {
@@ -95,6 +96,7 @@ public class Author extends Person
 		CriteriaQuery<Author> query = cb.createQuery(Author.class);
 		Root<Author> root = query.from(Author.class);
 		query = query.select(root);
+		query.distinct(true);
 		
 		Predicate where = null;
 		
@@ -124,6 +126,23 @@ public class Author extends Person
 		session.getTransaction().commit();
 		
 		return authors;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Author other = (Author) obj;
+		return id == other.id;
 	}
 	
 }

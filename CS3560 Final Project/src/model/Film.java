@@ -75,6 +75,13 @@ public class Film extends Item
 		return director;
 	}
 	
+	@Override
+	public void delete() {
+		this.director = null;
+		update();
+		super.delete();
+	}
+	
 	// overriding toString()
 	@Override
 	public String toString()
@@ -93,52 +100,53 @@ public class Film extends Item
 		CriteriaQuery<Film> query = cb.createQuery(Film.class);
 		Root<Film> root = query.from(Film.class);
 		Join<Film, Director> joined = root.join("director", JoinType.LEFT);
+		query.distinct(true);
 		
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
 		if (filmQuery.getCode() != null) {
-			predicates.add(cb.equal(joined.get("code"), filmQuery.getCode()));
+			predicates.add(cb.equal(root.get("code"), filmQuery.getCode()));
 		}
 		
 		if (filmQuery.getTitle() != null) {
-			predicates.add(cb.like(joined.get("title"), cb.concat("%", 
+			predicates.add(cb.like(root.get("title"), cb.concat("%", 
 					cb.concat(cb.parameter(String.class, "title"), "%")
 			)));
 		}
 		
 		if (filmQuery.getLocation() != null) {
-			predicates.add(cb.like(joined.get("location"), cb.concat("%", 
+			predicates.add(cb.like(root.get("location"), cb.concat("%", 
 					cb.concat(cb.parameter(String.class, "location"), "%")
 			)));
 		}
 		
 		if (filmQuery.getMaxDailyPrice() != null) {
-			predicates.add(cb.lessThanOrEqualTo(joined.get("daily_price"), filmQuery.getMaxDailyPrice()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("dailyPrice"), filmQuery.getMaxDailyPrice()));
 		}
 		
 		if (filmQuery.getMinDailyPrice() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(joined.get("daily_price"), filmQuery.getMinDailyPrice()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("dailyPrice"), filmQuery.getMinDailyPrice()));
 		}
 		
 		if (filmQuery.isOnlyAvailable()) {
-			predicates.add(cb.equal(joined.get("available"), true));
+			predicates.add(cb.equal(root.get("available"), true));
 		}
 		
 		if (filmQuery.getMaxLength() != null) {
-			predicates.add(cb.lessThanOrEqualTo(joined.get("length"), filmQuery.getMaxLength()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("length"), filmQuery.getMaxLength()));
 		}
 		
 		if (filmQuery.getMinLength() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(joined.get("length"), filmQuery.getMinLength()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("length"), filmQuery.getMinLength()));
 		}
 		
 		if (filmQuery.getReleasedAfter() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(joined.get("release_date"), filmQuery.getReleasedAfter()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("releaseDate"), filmQuery.getReleasedAfter()));
 		}
 		
 		if (filmQuery.getReleasedBefore() != null) {
-			predicates.add(cb.lessThanOrEqualTo(joined.get("release_date"), filmQuery.getReleasedBefore()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("releaseDate"), filmQuery.getReleasedBefore()));
 		}
 		
 		if (filmQuery.getDirectorName() != null) {

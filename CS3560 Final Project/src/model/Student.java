@@ -108,6 +108,7 @@ public class Student extends Person
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Student> query = cb.createQuery(Student.class);
 		Root<Student> root = query.from(Student.class);
+		query.distinct(true);
 		
 		root.fetch("loans", JoinType.LEFT).fetch("item", JoinType.LEFT);
 		

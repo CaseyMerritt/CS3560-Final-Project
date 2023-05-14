@@ -81,8 +81,7 @@ public class Director extends Person
 	@Override
 	public String toString()
 	{
-		return "Director: " + super.getName() +  "\n\tNationality: " + nationality +
-				"\n\tStyle: " + style + "\n";
+		return id + " - " + getName();
 	}
 	
 	public static List<Director> findBy(String name, String nationality, String style) {
@@ -95,6 +94,7 @@ public class Director extends Person
 		CriteriaQuery<Director> query = cb.createQuery(Director.class);
 		Root<Director> root = query.from(Director.class);
 		query = query.select(root);
+		query.distinct(true);
 		
 		Predicate where = null;
 		
