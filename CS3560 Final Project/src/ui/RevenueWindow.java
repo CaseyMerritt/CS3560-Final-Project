@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.text.NumberFormat;
+import java.time.Year;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -23,6 +24,10 @@ public class RevenueWindow extends JFrame {
 	private JTextField revenue;
 	private JTextField totalBalance;
 	
+	private DefaultTableModel model;
+	
+	private static final int STARTING_YEAR = 1980;
+	
 	public RevenueWindow() {
 		setupWindow();
 	}
@@ -33,7 +38,10 @@ public class RevenueWindow extends JFrame {
         setTitle("Revenue Report");
 		
         year = new JComboBox<>();
-        year.addItem(2023);
+        
+        for (int i = Year.now().getValue(); i >= STARTING_YEAR; i--)
+        	year.addItem(i);
+        
         revenue = new JTextField(20);
         revenue.setText("");
         revenue.setEditable(false);
@@ -59,43 +67,16 @@ public class RevenueWindow extends JFrame {
         fieldPanel.add(revenuePanel);
         fieldPanel.add(balancePanel);
         
-		// Create table with 8 columns.
+		// Create table
         String[] columnNames = {
             "Bronco ID", "Student Name", "Balance", "Paid Amount"
         };
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        model = new DefaultTableModel(columnNames, 0);
         table = new JTable(model);
-
-        List<Student> studentsList = Student.findBy(null, null);
-        if(studentsList.size() <= 0){
-            System.out.println("Empty Set");
-        }
         
-        int currentYear = (int)year.getSelectedItem();
-        NumberFormat format = NumberFormat.getCurrencyInstance();
-        double rev = 0;
-        double totalB = 0;
-        for(int i = 0; i < studentsList.size(); i++){
-            System.out.println("running");
-            String[] arr = new String[4];
-
-            arr[0] = String.valueOf(studentsList.get(i).getBroncoId());
-            arr[1] = studentsList.get(i).getName();
-            
-            double bal = studentsList.get(i).calculateBalance(currentYear);
-            double paid = studentsList.get(i).calculateTotalPaid(currentYear);
-            
-            arr[2] = format.format(bal);
-            arr[3] = format.format(paid);
-
-            totalB += bal;
-            rev += paid;
-
-            model.addRow(arr);
-        }
-
-        revenue.setText(String.valueOf(rev));
-        totalBalance.setText(String.valueOf(totalB));
+        year.addActionListener(e -> {
+        	handleYearChange();
+        });
 
         // Create a JScrollPane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);   
@@ -103,27 +84,45 @@ public class RevenueWindow extends JFrame {
         add(fieldPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         
+        // setup initial values of revenue report
+        handleYearChange();
         
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
 	}
 
-    public double getPaid(List<Loan> loans){
-        double totalPaid = 0;
-        for(int i = 0; i < loans.size(); i++){
-            totalPaid += loans.get(i).getPaidAmount();
-        }
+	private void handleYearChange() {
+		model.setRowCount(0);
+		
+		List<Student> studentsList = Student.findBy(null, null);
+		
+		// add information for students
+		int currentYear = (int)year.getSelectedItem();
+		NumberFormat format = NumberFormat.getCurrencyInstance();
+		double rev = 0;
+		double totalBal = 0;
+		for(int i = 0; i < studentsList.size(); i++){
+		    String[] arr = new String[4];
 
-        return totalPaid;
-    }
+		    arr[0] = String.valueOf(studentsList.get(i).getBroncoId());
+		    arr[1] = studentsList.get(i).getName();
+		    
+		    double bal = studentsList.get(i).calculateBalance(currentYear);
+		    double paid = studentsList.get(i).calculateTotalPaid(currentYear);
+		    
+		    arr[2] = format.format(bal);
+		    arr[3] = format.format(paid);
 
-    public double getBalance(List<Loan> loans){
-        double totalBalance = 0;
-        for(int i = 0; i < loans.size(); i++){
-            totalBalance += loans.get(i).calculatePrice();
-        }
+		    totalBal += bal;
+		    rev += paid;
+		    
+		    if (bal > 0 && paid > 0)
+		    	model.addRow(arr);
+		}
+		
+		revenue.setText(format.format(rev));
+		totalBalance.setText(format.format(totalBal));
+	}
 
-        return totalBalance;
-    }
 }
