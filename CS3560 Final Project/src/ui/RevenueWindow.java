@@ -3,6 +3,7 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.text.NumberFormat;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -18,7 +19,7 @@ import model.Student;
 
 public class RevenueWindow extends JFrame {
 	private JTable table;
-	private JComboBox<String> year;
+	private JComboBox<Integer> year;
 	private JTextField revenue;
 	private JTextField totalBalance;
 	
@@ -32,7 +33,7 @@ public class RevenueWindow extends JFrame {
         setTitle("Revenue Report");
 		
         year = new JComboBox<>();
-        year.addItem("2023");
+        year.addItem(2023);
         revenue = new JTextField(20);
         revenue.setText("");
         revenue.setEditable(false);
@@ -70,6 +71,8 @@ public class RevenueWindow extends JFrame {
             System.out.println("Empty Set");
         }
         
+        int currentYear = (int)year.getSelectedItem();
+        NumberFormat format = NumberFormat.getCurrencyInstance();
         double rev = 0;
         double totalB = 0;
         for(int i = 0; i < studentsList.size(); i++){
@@ -78,11 +81,15 @@ public class RevenueWindow extends JFrame {
 
             arr[0] = String.valueOf(studentsList.get(i).getBroncoId());
             arr[1] = studentsList.get(i).getName();
-            arr[2] = String.valueOf(getBalance(studentsList.get(i).getLoans()));
-            arr[3] = String.valueOf(getPaid(studentsList.get(i).getLoans()));
+            
+            double bal = studentsList.get(i).calculateBalance(currentYear);
+            double paid = studentsList.get(i).calculateTotalPaid(currentYear);
+            
+            arr[2] = format.format(bal);
+            arr[3] = format.format(paid);
 
-            totalB += Double.parseDouble(arr[2]);
-            rev += Double.parseDouble(arr[3]);
+            totalB += bal;
+            rev += paid;
 
             model.addRow(arr);
         }
