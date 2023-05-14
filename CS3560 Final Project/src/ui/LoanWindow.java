@@ -8,6 +8,8 @@ import java.awt.FlowLayout;
 import java.awt.Dimension;
 
 import model.Loan;
+import model.LoanQuery;
+
 import java.util.List;
 
 public class LoanWindow extends JFrame {
@@ -75,8 +77,9 @@ public class LoanWindow extends JFrame {
         JButton returnButton = new JButton("Return");
         JButton editButton = new JButton("Edit");
 
-        Loan loan = new Loan();
-        List<Loan> loans = loan.getLoan(num);
+        LoanQuery lq = new LoanQuery();
+        lq.setNumber(num);
+        List<Loan> loans = Loan.findBy(lq);
 
         if(loans.size() > 0){
             numberInput.setText(String.valueOf((loans.get(0).getNumber())));
@@ -103,11 +106,11 @@ public class LoanWindow extends JFrame {
         add(inputFields, BorderLayout.NORTH);
 
         returnButton.addActionListener(e -> {
-
+            //TODO
         });
 
         editButton.addActionListener(e -> {
-
+            //TODO
         });
 
 

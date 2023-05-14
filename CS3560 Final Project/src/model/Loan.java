@@ -277,30 +277,6 @@ public class Loan implements CrudOperations
 		return loans;
 	}
 
-	public List<Loan> getLoan(int num){
-
-		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
-		Session session = sessionFactory.getCurrentSession();
-		Transaction transaction = null;
-
-        List<Loan> loans = null;
-    
-        try {
-            transaction = session.beginTransaction();
-			Query<Loan> query = session.createQuery("from Loan where number = :num", Loan.class);
-			query.setParameter("num", num);
-            loans = query.list();
-            transaction.commit();
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw e;
-        }
-
-		return loans;
-	}
-
 	@Override
 	public void create() {
 		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();

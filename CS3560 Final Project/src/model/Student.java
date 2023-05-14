@@ -132,27 +132,4 @@ public class Student extends Person
 		
 		return students;
 	}
-
-	public List<Student> getAllStudents(){
-		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
-		Session session = sessionFactory.getCurrentSession();
-		Transaction transaction = null;
-
-        List<Student> Students = null;
-    
-        try {
-            transaction = session.beginTransaction();
-            Query query = session.createQuery("from Student", Student.class);
-            Students = query.list();
-            transaction.commit();
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw e;
-        }
-    
-        return Students;
-	}
-	
 }

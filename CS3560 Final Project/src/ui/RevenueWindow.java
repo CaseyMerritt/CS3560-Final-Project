@@ -65,12 +65,15 @@ public class RevenueWindow extends JFrame {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         table = new JTable(model);
 
-        Student student = new Student();
-        List<Student> studentsList = student.getAllStudents();
+        List<Student> studentsList = Student.findBy(null, null);
+        if(studentsList.size() <= 0){
+            System.out.println("Empty Set");
+        }
         
         double rev = 0;
         double totalB = 0;
         for(int i = 0; i < studentsList.size(); i++){
+            System.out.println("running");
             String[] arr = new String[4];
 
             arr[0] = String.valueOf(studentsList.get(i).getBroncoId());
