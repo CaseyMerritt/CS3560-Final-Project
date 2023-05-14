@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -97,6 +98,32 @@ public class Student extends Person
 		}
 		
 		return totalBalance;
+	}
+	
+	public double calculateBalance(int year) {
+		double totalBalance = 0.0;
+		Calendar cal = Calendar.getInstance();
+		
+		for (Loan loan : loans) {
+			cal.setTime(loan.getLoanDate());
+			if (cal.get(Calendar.YEAR) <= year)
+				totalBalance += loan.calculatePrice() - loan.getPaidAmount();
+		}
+		
+		return totalBalance;
+	}
+	
+	public double calculateTotalPaid(int year) {
+		double paid = 0.0;
+		Calendar cal = Calendar.getInstance();
+		
+		for (Loan loan : loans) {
+			cal.setTime(loan.getLoanDate());
+			if (cal.get(Calendar.YEAR) == year)
+				paid += loan.getPaidAmount();
+		}
+		
+		return paid;
 	}
 	
 	public static List<Student> findBy(String name, Integer broncoId) {
