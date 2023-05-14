@@ -94,6 +94,11 @@ public class MakeLoanWindow extends JFrame {
         	
         	Student s = (Student) student.getSelectedItem();
         	
+        	if (s == null) {
+        		JOptionPane.showMessageDialog(this, "Invalid student!", "Error", JOptionPane.ERROR_MESSAGE);
+        		return;
+        	}
+        	
         	if (s.getNumberLoansOverdue() > 0) {
         		JOptionPane.showMessageDialog(this, "Student has too many overdue loans!", "Error", JOptionPane.ERROR_MESSAGE);
         		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));

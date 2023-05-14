@@ -1,8 +1,12 @@
 package ui;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.table.DefaultTableModel;
+
+import java.awt.Dimension;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
+
+import org.hibernate.HibernateException;
 
 import database.HibernateSessionFactory;
 import ui.tab.AuthorsTabPanel;
@@ -14,6 +18,13 @@ import ui.tab.StudentsTabPanel;
 public class ApplicationWindow extends JFrame{
 	
 	public static void main(String[] args) {
+		try {
+			HibernateSessionFactory.getSessionFactory();
+		} catch (HibernateException e) {
+			JOptionPane.showMessageDialog(null, "Unable to connect to database!", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		new ApplicationWindow();
 	}
 	
@@ -38,7 +49,5 @@ public class ApplicationWindow extends JFrame{
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
-        
-        HibernateSessionFactory.getSessionFactory();
     }
 }
