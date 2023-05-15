@@ -43,7 +43,6 @@ public class DirectorWindow extends JFrame{
 				return;
 			}
 			
-			// TODO handle SQLException
 			this.director.setName(name);
 			this.director.setNationality(nationality);
             this.director.setStyle(style);

@@ -110,8 +110,13 @@ public class LoansTabPanel extends TabPanel<Loan> {
 		"Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
 		
 		if(option == JOptionPane.YES_OPTION){
-			// TODO handle exceptions
-			loan.delete();
+			try {
+				loan.delete();
+			} catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(null, "Unable to delete loan!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+			}
+			
 		    model.removeRow(selectedRowIndex);
 			
 		    // Display confirmation of deletion

@@ -322,11 +322,16 @@ public class Loan implements CrudOperations
 		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
 		Session session = sessionFactory.getCurrentSession();
 		
-		session.beginTransaction();
-		item.setAvailable(true);
-		session.update(item);
-		session.delete(this);
-		session.getTransaction().commit();
+		try {
+			session.beginTransaction();
+			item.setAvailable(true);
+			session.update(item);
+			session.delete(this);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			throw new IllegalStateException("Unable to delete loan");
+		}
 	}
 
 	public boolean isOverdue() {

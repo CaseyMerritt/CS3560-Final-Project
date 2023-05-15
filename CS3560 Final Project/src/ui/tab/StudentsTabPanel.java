@@ -87,8 +87,13 @@ public class StudentsTabPanel extends TabPanel<Student> {
         "Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
         
         if(option == JOptionPane.YES_OPTION){
-        	// TODO handle exceptions
-            student.delete();
+        	try {
+        		student.delete();
+        	} catch (IllegalStateException e) {
+        		JOptionPane.showMessageDialog(null, "Unable to delete student!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+        	}
+
             model.removeRow(selectedRowIndex);
         	
             // Display confirmation of deletion
@@ -121,7 +126,6 @@ public class StudentsTabPanel extends TabPanel<Student> {
     	
     	Student student = new Student(name, broncoIdInt);
     	
-    	// TODO handle exceptions
     	student.create();
     	
     	JOptionPane.showMessageDialog(this, "Student added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -131,13 +135,13 @@ public class StudentsTabPanel extends TabPanel<Student> {
 		String name = nameField.getText().trim();
     	String broncoIdText = broncoIdField.getText().trim();
     	int broncoId = 0;
-    	// TODO handle exceptions
+
     	try {
     		broncoId = Integer.parseInt(broncoIdText);
     	} catch (NumberFormatException ex) {
-    		
+    		JOptionPane.showMessageDialog(null, "Invalid Bronco ID!", "Error", JOptionPane.INFORMATION_MESSAGE);
+            return;
     	}
-    	
     	
         List<Student> students = Student.findBy(name.isBlank() ? null : name, broncoIdText.isBlank() ? null : broncoId);
         

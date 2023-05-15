@@ -87,8 +87,13 @@ public class AuthorsTabPanel extends TabPanel<Author> {
 		        "Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
 		
 		if(option == JOptionPane.YES_OPTION){
-			// TODO handle exceptions
-		    author.delete();
+			try {
+				author.delete();
+			} catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(null, "Unable to delete author!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+			}
+		    
 		    model.removeRow(selectedRowIndex);
 			
 		    // Display confirmation of deletion
@@ -118,7 +123,6 @@ public class AuthorsTabPanel extends TabPanel<Author> {
 		
 		Author author = new Author(name, nationality, subject);
 		
-		// TODO handle exceptions
 		author.create();
 		
 		JOptionPane.showMessageDialog(this, "Author added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);

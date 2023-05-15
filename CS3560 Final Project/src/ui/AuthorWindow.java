@@ -47,7 +47,6 @@ public class AuthorWindow extends JFrame{
 			return;
 		}
 		
-		// TODO handle exceptions
 		this.author.setName(name);
 		this.author.setNationality(nationality);
 		this.author.setSubject(subject);

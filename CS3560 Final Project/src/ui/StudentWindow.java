@@ -46,10 +46,15 @@ public class StudentWindow extends JFrame {
 				return;
 			}
 			
-			// TODO handle SQLException
 			this.student.setBroncoId(broncoId);
 			this.student.setName(name);
-			this.student.update();
+			
+			try {
+				this.student.update();
+			} catch (IllegalStateException e1) {
+				JOptionPane.showMessageDialog(null, "Unable to update student! Check for duplicate ID!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+			}
 			
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		});
