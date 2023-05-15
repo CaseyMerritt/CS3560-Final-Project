@@ -11,6 +11,9 @@ import model.Loan;
 import model.LoanQuery;
 
 import java.util.List;
+import java.util.Date;
+import java.text.DateFormat;  
+import java.text.SimpleDateFormat;  
 
 public class LoanWindow extends JFrame {
     JTextField numberInput;
@@ -88,8 +91,15 @@ public class LoanWindow extends JFrame {
             itemTitleInput.setText((loans.get(0).getItem().getTitle()));
             nameInput.setText((loans.get(0).getStudent().getName()));
             amoundPaidInput.setText(String.valueOf((loans.get(0).getPaidAmount())));
-            loanDateInput.setText("");
-            dueDateInput.setText("");
+
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+            Date loanDate = loans.get(0).getLoanDate();
+            loanDateInput.setText(dateFormat.format(loanDate));
+            
+            Date dueDate = loans.get(0).getDueDate();
+            dueDateInput.setText(dateFormat.format(dueDate));
+
             returnDateInput.setText("");
         }else{
             System.out.println("Empty Query");
@@ -106,11 +116,44 @@ public class LoanWindow extends JFrame {
         add(inputFields, BorderLayout.NORTH);
 
         returnButton.addActionListener(e -> {
-            //TODO
+            Date todaysDate = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+            loans.get(0).setReturnDate(todaysDate);
+
+            returnDateInput.setText(dateFormat.format(todaysDate));
+
+            loans.get(0).getItem().setAvailable(true);
+
+            try {
+                loans.get(0).update();   
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Incorrect Date Format!", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
         });
 
         editButton.addActionListener(e -> {
-            //TODO
+            Loan loanToUpdate = loans.get(0);
+
+            loanToUpdate.setNumber(Integer.parseInt(numberInput.getText()));
+            loanToUpdate.getStudent().setBroncoId((Integer.parseInt(boncoIdInput.getText())));
+            loanToUpdate.setPaidAmount((Integer.parseInt(amoundPaidInput.getText())));
+            loanToUpdate.getItem().setTitle(itemTitleInput.getText());
+            loanToUpdate.getStudent().setName(nameInput.getText());
+
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+            try {
+                Date loanDate = dateFormat.parse(loanDateInput.getText());
+                loanToUpdate.setLoanDate(loanDate);
+
+                Date dueDate = dateFormat.parse(dueDateInput.getText());
+                loanToUpdate.setDueDate(dueDate);
+
+                loanToUpdate.update();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Error Something went wrong!", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
         });
 
 

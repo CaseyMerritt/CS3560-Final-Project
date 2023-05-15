@@ -17,7 +17,7 @@ public class ItemDriver {
 		book.setPages(100);
 		book.setPublisher("Book Publisher");
 		book.setPublicationDate(new Date());
-		book.addAuthor(author);
+		//book.addAuthor(author);
 		
 		book.create();
 		
@@ -29,7 +29,7 @@ public class ItemDriver {
 			System.out.println(b);
 		}
 		
-		book.removeAuthor(author);
+		//book.removeAuthor(author);
 		book.update();
 		
 		author.delete();
