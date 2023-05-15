@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 
 import model.Loan;
 import model.LoanQuery;
+import ui.LoanWindow;
 import ui.RevenueWindow;
 import ui.table.LoanTableModel;
 
@@ -51,7 +52,28 @@ public class LoansTabPanel extends TabPanel<Loan> {
         // Add edit button.
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(e -> {
-            // TODO Handle edit.
+            // Handle edit
+        	int selectedRowIndex = getSelectedRow();
+    		
+    		if (selectedRowIndex < 0) return;
+    		
+    		Loan loan = (Loan) model.getRow(selectedRowIndex);
+    		
+    		new LoanWindow(loan, LoanWindow.EDIT);
+        });
+        
+        // Add return button.
+        JButton returnButton = new JButton("Return");
+        returnButton.addActionListener(e -> {
+            // Handle edit
+        	int selectedRowIndex = getSelectedRow();
+    		
+    		if (selectedRowIndex < 0) return;
+    		
+    		Loan loan = (Loan) model.getRow(selectedRowIndex);
+    		
+    		if (loan.getReturnDate() == null)
+    			new LoanWindow(loan, LoanWindow.RETURN);
         });
 
         // Add delete button.
@@ -70,6 +92,7 @@ public class LoansTabPanel extends TabPanel<Loan> {
         addButton(searchButton);
         addButton(resetButton);
         addButton(editButton);
+        addButton(returnButton);
         addButton(deleteButton);
         addButton(revenueButton);
     }
@@ -79,7 +102,7 @@ public class LoansTabPanel extends TabPanel<Loan> {
 		
 		if (selectedRowIndex < 0) return;
 		
-		Loan loan = (Loan) model.getRow(selectedRowIndex);;
+		Loan loan = (Loan) model.getRow(selectedRowIndex);
 
 		// confirm deletion
 		int option = JOptionPane.showConfirmDialog(this, 
@@ -87,8 +110,13 @@ public class LoansTabPanel extends TabPanel<Loan> {
 		"Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
 		
 		if(option == JOptionPane.YES_OPTION){
-			// TODO handle exceptions
-			loan.delete();
+			try {
+				loan.delete();
+			} catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(null, "Unable to delete loan!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+			}
+			
 		    model.removeRow(selectedRowIndex);
 			
 		    // Display confirmation of deletion

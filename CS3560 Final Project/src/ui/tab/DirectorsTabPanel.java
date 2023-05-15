@@ -87,8 +87,13 @@ public class DirectorsTabPanel extends TabPanel<Director> {
 		        "Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
 		
 		if(option == JOptionPane.YES_OPTION){
-			// TODO handle exceptions
-		    director.delete();
+			try {
+				director.delete();
+			} catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(null, "Unable to delete director!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+			}
+		    
 		    model.removeRow(selectedRowIndex);
 			
 		    // Display confirmation of deletion
@@ -118,7 +123,6 @@ public class DirectorsTabPanel extends TabPanel<Director> {
 		
 		Director director = new Director(name, nationality, style);
 		
-		// TODO handle exceptions
 		director.create();
 		
 		JOptionPane.showMessageDialog(this, "Director added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);

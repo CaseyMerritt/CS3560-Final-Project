@@ -20,6 +20,7 @@ import model.Film;
 import model.FilmQuery;
 import model.Item;
 import model.ItemQuery;
+import ui.ItemWindow;
 import ui.MakeLoanWindow;
 import ui.table.ItemTableModel;
 
@@ -64,13 +65,19 @@ public class ItemTabPanel extends TabPanel<Item> {
         // Add add button.
         JButton addButton = new JButton("Add New");
         addButton.addActionListener(e -> {
-            // TODO implement adding new item
+            new ItemWindow(bookButton.isSelected() ? ItemWindow.BOOK : ItemWindow.FILM);
         });
         
         // Add add button.
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(e -> {
-            // TODO implement edit item
+        	int selectedRowIndex = getSelectedRow();
+    		
+    		if (selectedRowIndex < 0) return;
+    		
+    		Item item = (Item) model.getRow(selectedRowIndex);;
+        	
+            new ItemWindow(item);
         });
 
         // Add delete button.
@@ -314,8 +321,14 @@ public class ItemTabPanel extends TabPanel<Item> {
 		"Confirm Delete", JOptionPane.YES_NO_CANCEL_OPTION);
 		
 		if(option == JOptionPane.YES_OPTION){
-			// TODO handle exceptions
-		    item.delete();
+			try {
+				item.delete();
+			} catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(this, "Cannot delete item! Check for existing loans!", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+		    
 		    model.removeRow(selectedRowIndex);
 			
 		    // Display confirmation of deletion

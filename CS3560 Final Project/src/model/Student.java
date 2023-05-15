@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
@@ -82,6 +84,10 @@ public class Student extends Person
 		
 		return numberActiveLoans;
 	}
+
+	public List<Loan> getLoans(){
+		return loans;
+	}
 	
 	public double calculateBalance() {
 		double totalBalance = 0.0;
@@ -90,7 +96,33 @@ public class Student extends Person
 			totalBalance += loan.calculatePrice() - loan.getPaidAmount();
 		}
 		
-		return totalBalance;
+		return totalBalance < 0 ? 0 : totalBalance;
+	}
+	
+	public double calculateBalance(int year) {
+		double totalBalance = 0.0;
+		Calendar cal = Calendar.getInstance();
+		
+		for (Loan loan : loans) {
+			cal.setTime(loan.getLoanDate());
+			if (cal.get(Calendar.YEAR) <= year)
+				totalBalance += loan.calculatePrice() - loan.getPaidAmount();
+		}
+		
+		return totalBalance < 0 ? 0 : totalBalance;
+	}
+	
+	public double calculateTotalPaid(int year) {
+		double paid = 0.0;
+		Calendar cal = Calendar.getInstance();
+		
+		for (Loan loan : loans) {
+			cal.setTime(loan.getLoanDate());
+			if (cal.get(Calendar.YEAR) == year)
+				paid += loan.getPaidAmount();
+		}
+		
+		return paid;
 	}
 	
 	public static List<Student> findBy(String name, Integer broncoId) {
@@ -102,13 +134,14 @@ public class Student extends Person
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Student> query = cb.createQuery(Student.class);
 		Root<Student> root = query.from(Student.class);
+		query.distinct(true);
 		
 		root.fetch("loans", JoinType.LEFT).fetch("item", JoinType.LEFT);
 		
 		List<Predicate> predicates = new ArrayList<>();
 		
 		if (name != null) {
-			predicates.add(cb.like(root.get("name"), "%" + name + "%"));
+			predicates.add(cb.like(root.get("name"), cb.concat("%", cb.concat(cb.parameter(String.class, "name"), "%"))));
 		}
 		
 		if (broncoId != null) {
@@ -118,13 +151,16 @@ public class Student extends Person
 		if (predicates.size() > 0)
 			query.where(cb.and(predicates.toArray(new Predicate[0])));
 		
-		// TODO sql injection
+		TypedQuery<Student> typedQuery = session.createQuery(query);
 		
-		List<Student> students = session.createQuery(query).getResultList();
+		if (name != null) {
+			typedQuery.setParameter("name", name);
+		}
+		
+		List<Student> students = typedQuery.getResultList();
 		
 		session.getTransaction().commit();
 		
 		return students;
 	}
-	
 }

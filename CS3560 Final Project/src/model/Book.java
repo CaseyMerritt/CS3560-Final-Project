@@ -1,15 +1,14 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TypedQuery;
@@ -45,14 +44,12 @@ public class Book extends Item
 	
 	public Book() {
 		super(null, null, null, 0);
-		authors = new ArrayList<>();
 	}
 	
 	// constructor
 	public Book(String title, String description, String location, double dailyPrice)
 	{
 		super(title, description, location, dailyPrice);
-		authors = new ArrayList<>();
 	}
 
 	// setters
@@ -71,12 +68,8 @@ public class Book extends Item
 		this.publicationDate = new Date(publicationDate.getTime());
 	}
 	
-	public void addAuthor(Author author) {
-		authors.add(author);
-	}
-	
-	public void removeAuthor(Author author) {
-		authors.remove(author);
+	public void setAuthors(List<Author> a) {
+		authors = a;
 	}
 
 	// getters
@@ -97,9 +90,24 @@ public class Book extends Item
 
 	public List<Author> getAuthors()
 	{
-		List<Author> result = new ArrayList<Author>();
-		Collections.copy(result, authors);
-		return result;
+		return authors;
+	}
+	
+	@Override
+	public void delete() {
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		this.authors.clear();
+		try {
+			session.update(this);
+			session.delete(this);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			throw new IllegalStateException("Unable to delete");
+		}
 	}
 	
 	// overriding toString()
@@ -126,8 +134,9 @@ public class Book extends Item
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Book> query = cb.createQuery(Book.class);
 		Root<Book> root = query.from(Book.class);
+		query.distinct(true);
 		
-		Join<Book, Author> joined = root.join("authors", JoinType.LEFT);
+		Join<Book, Author> joined = (Join<Book, Author>) root.<Book, Author>fetch("authors", JoinType.LEFT);
 		
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
@@ -151,11 +160,11 @@ public class Book extends Item
 		}
 		
 		if (bookQuery.getMaxDailyPrice() != null) {
-			predicates.add(cb.lessThanOrEqualTo(root.get("daily_price"), bookQuery.getMaxDailyPrice()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("dailyPrice"), bookQuery.getMaxDailyPrice()));
 		}
 		
 		if (bookQuery.getMinDailyPrice() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(root.get("daily_price"), bookQuery.getMinDailyPrice()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("dailyPrice"), bookQuery.getMinDailyPrice()));
 		}
 		
 		if (bookQuery.isOnlyAvailable()) {
@@ -171,11 +180,11 @@ public class Book extends Item
 		}
 		
 		if (bookQuery.getPublishedAfter() != null) {
-			predicates.add(cb.greaterThanOrEqualTo(root.get("publication_date"), bookQuery.getPublishedAfter()));
+			predicates.add(cb.greaterThanOrEqualTo(root.get("publicationDate"), bookQuery.getPublishedAfter()));
 		}
 		
 		if (bookQuery.getPublishedBefore() != null) {
-			predicates.add(cb.lessThanOrEqualTo(root.get("publication_date"), bookQuery.getPublishedBefore()));
+			predicates.add(cb.lessThanOrEqualTo(root.get("publicationDate"), bookQuery.getPublishedBefore()));
 		}
 		
 		if (bookQuery.getPublisher() != null) {

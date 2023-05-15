@@ -59,6 +59,12 @@ public abstract class Person implements CrudOperations
 		
 		session.beginTransaction();
 		session.delete(this);
-		session.getTransaction().commit();
+		try {
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			throw new IllegalStateException("Unable to delete!");
+		}
+		
 	}
 }

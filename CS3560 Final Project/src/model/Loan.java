@@ -1,9 +1,9 @@
 package model;
-import java.util.Date;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,8 +18,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -191,6 +191,26 @@ public class Loan implements CrudOperations
 		return days;
 	}
 	
+	public void returnItem(Date returnDate) {
+		this.returnDate = returnDate;
+		
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		
+		try {
+			this.item.setAvailable(true);
+			session.update(this.item);
+			session.update(this);
+			
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			throw new IllegalStateException("Cannot return item!");
+		}
+	}
+	
 	public static List<Loan> findBy(LoanQuery loanQuery) {
 		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
 		Session session = sessionFactory.getCurrentSession();
@@ -300,11 +320,16 @@ public class Loan implements CrudOperations
 		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
 		Session session = sessionFactory.getCurrentSession();
 		
-		session.beginTransaction();
-		item.setAvailable(true);
-		session.update(item);
-		session.delete(this);
-		session.getTransaction().commit();
+		try {
+			session.beginTransaction();
+			item.setAvailable(true);
+			session.update(item);
+			session.delete(this);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			throw new IllegalStateException("Unable to delete loan");
+		}
 	}
 
 	public boolean isOverdue() {

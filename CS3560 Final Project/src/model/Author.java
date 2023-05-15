@@ -1,5 +1,7 @@
 package model;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -24,6 +27,7 @@ import database.HibernateSessionFactory;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Author extends Person
 {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -81,8 +85,7 @@ public class Author extends Person
 	@Override
 	public String toString()
 	{
-		return "Author: " + super.getName() +  "\n\tNationality: " + nationality +
-				"\n\tSubject: " + subject + "\n";
+		return id + " - " + getName();
 	}
 	
 	public static List<Author> findBy(String name, String nationality, String subject) {
@@ -95,35 +98,61 @@ public class Author extends Person
 		CriteriaQuery<Author> query = cb.createQuery(Author.class);
 		Root<Author> root = query.from(Author.class);
 		query = query.select(root);
+		query.distinct(true);
 		
-		Predicate where = null;
+		List<Predicate> where = new ArrayList<>();
 		
 		if (name != null) {
-			where = cb.like(root.get("name"), "%" + name + "%");
+			where.add(cb.like(root.get("name"), cb.concat("%", cb.concat(cb.parameter(String.class, "name"), "%"))));
 		}
 		
 		if (nationality != null) {
-			if (where == null)
-				where = cb.like(root.get("nationality"), "%" + nationality + "%");
-			else
-				where = cb.and(where, cb.like(root.get("nationality"), "%" + nationality + "%"));
+			where.add(cb.like(root.get("nationality"), cb.concat("%", cb.concat(cb.parameter(String.class, "nationality"), "%"))));
 		}
 		
 		if (subject != null) {
-			if (where == null)
-				where = cb.like(root.get("subject"), "%" + subject + "%");
-			else
-				where = cb.and(where, cb.like(root.get("subject"), "%" + subject + "%"));
+			where.add(cb.like(root.get("subject"), cb.concat("%", cb.concat(cb.parameter(String.class, "subject"), "%"))));
 		}
 		
-		if (where != null)
-			query = query.where(where);
+		if (where.size() > 0)
+			query = query.where(cb.and(where.toArray(new Predicate[0])));
 		
-		List<Author> authors = session.createQuery(query).getResultList();
+		TypedQuery<Author> typedQuery = session.createQuery(query);
+		
+		if (name != null) {
+			typedQuery.setParameter("name", name);
+		}
+		
+		if (nationality != null) {
+			typedQuery.setParameter("nationality", nationality);
+		}
+		
+		if (subject != null) {
+			typedQuery.setParameter("subject", subject);
+		}
+		
+		List<Author> authors = typedQuery.getResultList();
 		
 		session.getTransaction().commit();
 		
 		return authors;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Author other = (Author) obj;
+		return id == other.id;
 	}
 	
 }
