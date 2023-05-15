@@ -1,22 +1,25 @@
 package ui;
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.JFrame;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
-import java.awt.FlowLayout;
-import java.awt.Dimension;
-
-import model.Loan;
-import model.LoanQuery;
-
-import java.util.List;
-import java.util.Date;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;  
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+
+import model.Loan;  
 
 public class LoanWindow extends JFrame {
 	
