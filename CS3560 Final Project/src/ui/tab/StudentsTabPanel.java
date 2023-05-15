@@ -137,7 +137,8 @@ public class StudentsTabPanel extends TabPanel<Student> {
     	int broncoId = 0;
 
     	try {
-    		broncoId = Integer.parseInt(broncoIdText);
+    		if (!broncoIdText.isBlank())
+    			broncoId = Integer.parseInt(broncoIdText);
     	} catch (NumberFormatException ex) {
     		JOptionPane.showMessageDialog(null, "Invalid Bronco ID!", "Error", JOptionPane.INFORMATION_MESSAGE);
             return;

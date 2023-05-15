@@ -1,4 +1,5 @@
 package model;
+import java.util.ArrayList;
 import java.util.List;
 //import java.sql.Date;
 
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -96,30 +98,38 @@ public class Director extends Person
 		query = query.select(root);
 		query.distinct(true);
 		
-		Predicate where = null;
+		List<Predicate> where = new ArrayList<>();
 		
 		if (name != null) {
-			where = cb.like(root.get("name"), "%" + name + "%");
+			where.add(cb.like(root.get("name"), cb.concat("%", cb.concat(cb.parameter(String.class, "name"), "%"))));
 		}
 		
 		if (nationality != null) {
-			if (where == null)
-				where = cb.like(root.get("nationality"), "%" + nationality + "%");
-			else
-				where = cb.and(where, cb.like(root.get("nationality"), "%" + nationality + "%"));
+			where.add(cb.like(root.get("nationality"), cb.concat("%", cb.concat(cb.parameter(String.class, "nationality"), "%"))));
 		}
 		
 		if (style != null) {
-			if (where == null)
-				where = cb.like(root.get("style"), "%" + style + "%");
-			else
-				where = cb.and(where, cb.like(root.get("style"), "%" + style + "%"));
+			where.add(cb.like(root.get("style"), cb.concat("%", cb.concat(cb.parameter(String.class, "style"), "%"))));
 		}
 		
-		if (where != null)
-			query = query.where(where);
+		if (where.size() > 0)
+			query = query.where(cb.and(where.toArray(new Predicate[0])));
 		
-		List<Director> directors = session.createQuery(query).getResultList();
+		TypedQuery<Director> typedQuery = session.createQuery(query);
+		
+		if (name != null) {
+			typedQuery.setParameter("name", name);
+		}
+		
+		if (nationality != null) {
+			typedQuery.setParameter("nationality", nationality);
+		}
+		
+		if (style != null) {
+			typedQuery.setParameter("style", style);
+		}
+		
+		List<Director> directors = typedQuery.getResultList();
 		
 		session.getTransaction().commit();
 		

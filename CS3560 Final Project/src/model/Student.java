@@ -12,6 +12,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
@@ -142,7 +143,7 @@ public class Student extends Person
 		List<Predicate> predicates = new ArrayList<>();
 		
 		if (name != null) {
-			predicates.add(cb.like(root.get("name"), "%" + name + "%"));
+			predicates.add(cb.like(root.get("name"), cb.concat("%", cb.concat(cb.parameter(String.class, "name"), "%"))));
 		}
 		
 		if (broncoId != null) {
@@ -152,9 +153,13 @@ public class Student extends Person
 		if (predicates.size() > 0)
 			query.where(cb.and(predicates.toArray(new Predicate[0])));
 		
-		// TODO sql injection
+		TypedQuery<Student> typedQuery = session.createQuery(query);
 		
-		List<Student> students = session.createQuery(query).getResultList();
+		if (name != null) {
+			typedQuery.setParameter("name", name);
+		}
+		
+		List<Student> students = typedQuery.getResultList();
 		
 		session.getTransaction().commit();
 		
