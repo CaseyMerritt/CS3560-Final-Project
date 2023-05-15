@@ -97,7 +97,7 @@ public class Student extends Person
 			totalBalance += loan.calculatePrice() - loan.getPaidAmount();
 		}
 		
-		return totalBalance;
+		return totalBalance < 0 ? 0 : totalBalance;
 	}
 	
 	public double calculateBalance(int year) {
@@ -110,7 +110,7 @@ public class Student extends Person
 				totalBalance += loan.calculatePrice() - loan.getPaidAmount();
 		}
 		
-		return totalBalance;
+		return totalBalance < 0 ? 0 : totalBalance;
 	}
 	
 	public double calculateTotalPaid(int year) {

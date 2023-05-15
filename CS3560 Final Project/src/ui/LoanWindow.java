@@ -4,6 +4,7 @@ import javax.swing.border.Border;
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.WindowEvent;
 import java.awt.FlowLayout;
 import java.awt.Dimension;
 
@@ -12,21 +13,27 @@ import model.LoanQuery;
 
 import java.util.List;
 import java.util.Date;
-import java.text.DateFormat;  
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;  
 
 public class LoanWindow extends JFrame {
-    JTextField numberInput;
-    JTextField boncoIdInput;
-    JTextField totalPriceInput;
-    JTextField itemTitleInput;
-    JTextField nameInput;
-    JTextField amoundPaidInput;
-    JTextField loanDateInput;
-    JTextField dueDateInput;
-    JTextField returnDateInput;
+	
+	public static final int RETURN = 1;
+	public static final int EDIT = 2;
+	
+    private JTextField numberInput;
+    private JTextField broncoIdInput;
+    private JTextField totalPriceInput;
+    private JTextField itemTitleInput;
+    private JTextField nameInput;
+    private JTextField amoundPaidInput;
+    private JTextField loanDateInput;
+    private JTextField dueDateInput;
+    private JTextField returnDateInput;
 
-    public LoanWindow(String state, int num){
+    public LoanWindow(Loan loan, int editType){
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(1000, 400));
         setTitle("Loan Window");
@@ -42,12 +49,16 @@ public class LoanWindow extends JFrame {
 
         numberInput = new JTextField(20);
         inputFields.add(numberInput);
+        numberInput.setEditable(false);
 
-        boncoIdInput = new JTextField(20);
-        inputFields.add(boncoIdInput);
+        broncoIdInput = new JTextField(20);
+        inputFields.add(broncoIdInput);
+        broncoIdInput.setEditable(false);
 
         totalPriceInput = new JTextField(20);
         inputFields.add(totalPriceInput);
+        totalPriceInput.setEditable(false);
+        totalPriceInput.setText(NumberFormat.getCurrencyInstance().format(loan.calculatePrice()));
 
         inputFields.add(new JLabel("Item Title"));
         inputFields.add(new JLabel("Student Name"));
@@ -55,9 +66,11 @@ public class LoanWindow extends JFrame {
 
         itemTitleInput = new JTextField(20);
         inputFields.add(itemTitleInput);
+        itemTitleInput.setEditable(false);
 
         nameInput = new JTextField(20);
         inputFields.add(nameInput);
+        nameInput.setEditable(false);
 
         amoundPaidInput = new JTextField(20);
         inputFields.add(amoundPaidInput);
@@ -77,83 +90,90 @@ public class LoanWindow extends JFrame {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        JButton returnButton = new JButton("Return");
-        JButton editButton = new JButton("Edit");
+        JButton editButton = new JButton();
 
-        LoanQuery lq = new LoanQuery();
-        lq.setNumber(num);
-        List<Loan> loans = Loan.findBy(lq);
+        numberInput.setText(String.valueOf((loan.getNumber())));
+        broncoIdInput.setText(String.valueOf((loan.getStudent().getBroncoId())));
+        totalPriceInput.setText(String.valueOf((loan.calculatePrice())));
+        itemTitleInput.setText((loan.getItem().getTitle()));
+        nameInput.setText((loan.getStudent().getName()));
+        amoundPaidInput.setText(String.valueOf((loan.getPaidAmount())));
 
-        if(loans.size() > 0){
-            numberInput.setText(String.valueOf((loans.get(0).getNumber())));
-            boncoIdInput.setText(String.valueOf((loans.get(0).getStudent().getBroncoId())));
-            totalPriceInput.setText(String.valueOf((loans.get(0).calculatePrice())));
-            itemTitleInput.setText((loans.get(0).getItem().getTitle()));
-            nameInput.setText((loans.get(0).getStudent().getName()));
-            amoundPaidInput.setText(String.valueOf((loans.get(0).getPaidAmount())));
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
-            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        Date loanDate = loan.getLoanDate();
+        loanDateInput.setText(dateFormat.format(loanDate));
+        
+        Date dueDate = loan.getDueDate();
+        dueDateInput.setText(dateFormat.format(dueDate));
 
-            Date loanDate = loans.get(0).getLoanDate();
-            loanDateInput.setText(dateFormat.format(loanDate));
-            
-            Date dueDate = loans.get(0).getDueDate();
-            dueDateInput.setText(dateFormat.format(dueDate));
-
-            returnDateInput.setText("");
-        }else{
-            System.out.println("Empty Query");
+        if(editType == RETURN){
+        	returnDateInput.setText(dateFormat.format(new Date()));
+        	editButton.setText("Return");
+        } else {
+        	if (loan.getReturnDate() == null)
+        		returnDateInput.setEditable(false);
+        	else
+        		returnDateInput.setText(dateFormat.format(loan.getLoanDate()));
+        	
+        	editButton.setText("Save");
         }
-
-        if(state == "info"){
-        }else if(state == "return"){
-            buttonPanel.add(returnButton);
-        }else if(state == "edit"){
-            buttonPanel.add(editButton);
-        }
+        
+        buttonPanel.add(editButton);
 
         inputFields.add(buttonPanel);
         add(inputFields, BorderLayout.NORTH);
 
-        returnButton.addActionListener(e -> {
-            Date todaysDate = new Date();
-            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-
-            loans.get(0).setReturnDate(todaysDate);
-
-            returnDateInput.setText(dateFormat.format(todaysDate));
-
-            loans.get(0).getItem().setAvailable(true);
-
-            try {
-                loans.get(0).update();   
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Incorrect Date Format!", "Error", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
         editButton.addActionListener(e -> {
-            Loan loanToUpdate = loans.get(0);
-
-            loanToUpdate.setNumber(Integer.parseInt(numberInput.getText()));
-            loanToUpdate.getStudent().setBroncoId((Integer.parseInt(boncoIdInput.getText())));
-            loanToUpdate.setPaidAmount((Integer.parseInt(amoundPaidInput.getText())));
-            loanToUpdate.getItem().setTitle(itemTitleInput.getText());
-            loanToUpdate.getStudent().setName(nameInput.getText());
-
-            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Loan loanToUpdate = loan;
+            
+            try {
+				Date dateLoan = dateFormat.parse(loanDateInput.getText());
+				loanToUpdate.setLoanDate(dateLoan);
+			} catch (ParseException e1) {
+				JOptionPane.showMessageDialog(null, "Invalid loan date!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+			}
 
             try {
-                Date loanDate = dateFormat.parse(loanDateInput.getText());
-                loanToUpdate.setLoanDate(loanDate);
+				Date dateDue = dateFormat.parse(dueDateInput.getText());
+				loanToUpdate.setDueDate(dateDue);
+			} catch (ParseException e1) {
+				JOptionPane.showMessageDialog(null, "Invalid due date!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+			}
+            
+            try {
+				loanToUpdate.setPaidAmount((Double.parseDouble(amoundPaidInput.getText())));
+			} catch (NumberFormatException e1) {
+				JOptionPane.showMessageDialog(null, "Invalid paid amount!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+			}
 
-                Date dueDate = dateFormat.parse(dueDateInput.getText());
-                loanToUpdate.setDueDate(dueDate);
-
-                loanToUpdate.update();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Error Something went wrong!", "Error", JOptionPane.INFORMATION_MESSAGE);
+            
+            Date returnDate = null;
+            try {
+            	returnDate = dateFormat.parse(returnDateInput.getText());
+            } catch (ParseException ex) {
+            	if (editType == RETURN) {
+            		JOptionPane.showMessageDialog(null, "Invalid return date!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+            	} else {
+            		loanToUpdate.setReturnDate(returnDate);
+            	}
             }
+            
+            try {
+            	if (editType == RETURN)
+            		loanToUpdate.returnItem(returnDate);
+            	else
+            		loanToUpdate.update();
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, "Error Something went wrong!", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+			}
+            
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         });
 
 

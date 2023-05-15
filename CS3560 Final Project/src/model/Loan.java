@@ -193,6 +193,26 @@ public class Loan implements CrudOperations
 		return days;
 	}
 	
+	public void returnItem(Date returnDate) {
+		this.returnDate = returnDate;
+		
+		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.beginTransaction();
+		
+		try {
+			this.item.setAvailable(true);
+			session.update(this.item);
+			session.update(this);
+			
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			throw new IllegalStateException("Cannot return item!");
+		}
+	}
+	
 	public static List<Loan> findBy(LoanQuery loanQuery) {
 		SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
 		Session session = sessionFactory.getCurrentSession();

@@ -117,7 +117,7 @@ public class RevenueWindow extends JFrame {
 		    totalBal += bal;
 		    rev += paid;
 		    
-		    if (bal > 0 && paid > 0)
+		    if (bal > 0 || paid > 0)
 		    	model.addRow(arr);
 		}
 		
